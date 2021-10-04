@@ -10,6 +10,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(
 	HEADERS
+	"config.hpp"
 	"console.hpp"
 	"cursor.hpp"
 	"exception.hpp"

@@ -3,6 +3,7 @@
 #include "windows.hpp"
 
 #include <algorithm>
+#include <string>
 
 class Cursor
 {
@@ -51,6 +52,13 @@ public:
 
 	static constexpr int min_size = 1;
 	static constexpr int max_size = 100;
+
+	inline static const std::string field			 = "cursor";
+	inline static const std::string size_field		 = "size";
+	inline static const std::string visibility_field = "visible";
+
+	static constexpr int  default_size		 = max_size;
+	static constexpr bool default_visibility = true;
 
 private:
 	constexpr void set_size(int size) noexcept

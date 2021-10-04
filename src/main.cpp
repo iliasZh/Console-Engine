@@ -1,3 +1,4 @@
+#include "config.hpp"
 #include "console.hpp"
 #include "exception.hpp"
 
@@ -9,12 +10,11 @@
 int main()
 {
 	try {
-		Console console{};
-		console.set_cursor({ Cursor::Preset::Invisible });
-		console.set_font({ 10 });
+		Config config;
 
-		auto config = YAML::LoadFile("../text/title.yaml");
-		fmt::print("title: {}\n", config["title"].as<std::string>());
+		Console console{};
+		console.set_cursor(config.load_cursor());
+		console.set_font(config.load_font());
 	}
 	catch (Exception& e) {
 		MessageBoxA(nullptr, e.what().c_str(), "Application error",

@@ -3,7 +3,7 @@
 #include "windows.hpp"
 
 #include <cassert>
-#include <string_view>
+#include <string>
 
 class Font
 {
@@ -38,7 +38,13 @@ public:
 		return info;
 	}
 
+	static constexpr int   default_width				 = 10;
 	static constexpr float default_height_to_width_ratio = 2.0F;
+
+	inline static const std::string field		= "font";
+	inline static const std::string width_field = "width";
+	inline static const std::string height_to_width_ratio_field =
+		"height_to_width_ratio";
 
 private:
 	CONSOLE_FONT_INFOEX info = {};
