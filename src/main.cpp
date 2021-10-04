@@ -4,9 +4,6 @@
 
 #include <exception>
 
-#include <fmt/format.h>
-#include <yaml-cpp/yaml.h>
-
 int main()
 {
 	try {
