@@ -15,6 +15,7 @@ set(
 	"cursor.hpp"
 	"exception.hpp"
 	"font.hpp"
+	"screen_buffer.hpp"
 	"windows.hpp"
 )
 

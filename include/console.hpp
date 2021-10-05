@@ -4,17 +4,17 @@
 
 #include "cursor.hpp"
 #include "font.hpp"
+#include "screen_buffer.hpp"
 
 class Console
 {
 public:
-	void set_cursor(Cursor);
-	void set_font(Font);
+	static void set_cursor(Cursor);
+	static void set_font(Font);
+	static void set_screen_buffer(ScreenBuffer);
 
 	static constexpr int time_to_apply_changes_ms = 50;
 
 private:
-	HANDLE std_out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-	// HANDLE std_in_handle  = GetStdHandle(STD_INPUT_HANDLE);
 	// HWND   window_handle  = nullptr;
 };

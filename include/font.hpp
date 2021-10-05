@@ -12,16 +12,16 @@ public:
 	{
 		assert(width > 0 && height > 0);
 
-		info.cbSize		= sizeof(info);
-		info.nFont		= 0;
-		info.dwFontSize = { static_cast<SHORT>(width),
-							static_cast<SHORT>(height) };
-		info.FontFamily = FF_DONTCARE;
-		info.FontWeight = FW_NORMAL;
+		m_info.cbSize	  = sizeof(m_info);
+		m_info.nFont	  = 0;
+		m_info.dwFontSize = { static_cast<SHORT>(width),
+							  static_cast<SHORT>(height) };
+		m_info.FontFamily = FF_DONTCARE;
+		m_info.FontWeight = FW_NORMAL;
 
 		const std::wstring_view face_name = L"Consolas";
-		face_name.copy(static_cast<WCHAR* const>(info.FaceName),
-					   std::size(info.FaceName));
+		face_name.copy(static_cast<WCHAR* const>(m_info.FaceName),
+					   std::size(m_info.FaceName));
 	}
 	Font(int width, float height_to_width_ratio = default_height_to_width_ratio)
 		: Font(width, static_cast<int>(static_cast<float>(width) *
@@ -30,12 +30,12 @@ public:
 
 	[[nodiscard]] const auto& get() const
 	{
-		return info;
+		return m_info;
 	}
 
 	[[nodiscard]] auto& get()
 	{
-		return info;
+		return m_info;
 	}
 
 	static constexpr int   default_width				 = 10;
@@ -47,5 +47,5 @@ public:
 		"height_to_width_ratio";
 
 private:
-	CONSOLE_FONT_INFOEX info = {};
+	CONSOLE_FONT_INFOEX m_info = {};
 };
