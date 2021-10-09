@@ -7,28 +7,21 @@
 class Exception
 {
 public:
-	using err_string	  = std::string;
-	using err_string_view = std::string_view;
-
-	Exception(err_string_view description, err_string_view file_name,
-			  int line) noexcept
-		: m_description(description)
+	Exception(std::string_view desc, std::string_view file_name, int line) noexcept // NOLINT
+		: m_description(desc)
 		, m_file_name(file_name)
 		, m_line(line)
 	{}
 
-	[[nodiscard]] err_string what() const noexcept
+	[[nodiscard]] std::string what() const noexcept
 	{
-		return fmt::format("Error in file \"{}\", line {}: {}", m_file_name,
-						   m_line, m_description);
+		return fmt::format("Error in \"{}\":{}:\n {}", m_file_name, m_line, m_description);
 	}
-
 private:
-	const err_string_view m_description;
-	const err_string_view m_file_name;
+	const std::string_view m_description;
+	const std::string_view m_file_name;
 
 	const int m_line;
 };
 
-#define THROW_EXCEPTION(error_msg) /* NOLINT */ \
-	throw Exception{ error_msg, __FILE__, __LINE__ };
+#define THROW_EXCEPTION(error_msg) throw Exception{ error_msg, __FILE__, __LINE__ }; // NOLINT

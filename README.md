@@ -2,11 +2,11 @@
 
 A 2d console game engine in progress (64-bit Windows only)
 
-#### How to build
+### How to build
 First of all, you need 64-bit Windows and an MSVC or Clang C++17 supporting compiler.
 I didn\'t manage to make dependencies compile with MinGW GCC, so no GCC unfortunately.
 
-This project uses CMake (>= 3.21) and vcpkg. Assuming you have CMake installed and working:
+This project uses CMake (3.21 minimum) and vcpkg. Assuming you have CMake installed and working:
 * Install vcpkg (`C:\dev\vcpkg` or `C:\src\vcpkg` path is recommended) and run the bootstrap script:
 
 	`git clone https://github.com/microsoft/vcpkg.git`

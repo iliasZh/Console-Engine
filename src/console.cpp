@@ -1,52 +1,51 @@
 #include "console.hpp"
 #include "exception.hpp"
+#include "util.hpp"
 
-void Console::set_cursor(const Cursor cursor)
+namespace console
 {
-	if (SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursor.get()) ==
-		FALSE)
-	{
+constexpr int time_to_apply_changes_ms = 50;
+
+void set_cursor(const CursorInfo cursor_info)
+{
+	if (SetConsoleCursorInfo(util::std_out(), &cursor_info.cref()) == FALSE) {
 		THROW_EXCEPTION("failed to set console cursor");
 	}
 }
 
-void Console::set_font(Font font)
+void set_font(FontInfo font_info)
 {
-	if (SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE,
-								&font.get()) == FALSE)
-	{
+	if (SetCurrentConsoleFontEx(util::std_out(), FALSE, &font_info.ref()) == FALSE) {
 		THROW_EXCEPTION("failed to set console font");
 	}
+
 	Sleep(time_to_apply_changes_ms);
 }
 
-void Console::set_screen_buffer(ScreenBuffer screen_buffer)
+void set_screen_buffer(const ScreenBufferSize screen_buffer_size)
 {
-	// at any time console window size must not exceed the size of console
-	// screen buffer for that reason set window size to minimum so that it is
-	// possible to set screen buffer size w/o problem
-	auto set_console_window_size = [](COORD lower_right_corner) {
-		SMALL_RECT r;
-		r.Left	 = 0;
-		r.Top	 = 0;
-		r.Right	 = lower_right_corner.X - 1;
-		r.Bottom = lower_right_corner.Y - 1;
+	auto set_console_window_size = [](const COORD dims) {
+		SMALL_RECT window;
+		window.Left	  = 0;
+		window.Top	  = 0;
+		window.Right  = static_cast<SHORT>(dims.X - 1);
+		window.Bottom = static_cast<SHORT>(dims.Y - 1);
 
-		if (auto* std_out = GetStdHandle(STD_OUTPUT_HANDLE);
-			SetConsoleWindowInfo(std_out, TRUE, &r) == FALSE)
-		{
+		if (SetConsoleWindowInfo(util::std_out(), TRUE, &window) == FALSE) {
 			THROW_EXCEPTION(
-				"failed to temporarily set console window size to 1 * 1");
+				fmt::format("failed to set console window size to {}*{}", dims.X, dims.Y));
 		}
 	};
 
+	// At any time console window size must not exceed the size of console screen buffer.
+	// For that reason set window size to minimum so that it is possible to set screen
+	// buffer size without a problem
 	set_console_window_size({ 1, 1 });
 
-	if (SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE),
-								   screen_buffer.size()) == FALSE)
-	{
+	if (SetConsoleScreenBufferSize(util::std_out(), screen_buffer_size.get()) == FALSE) {
 		THROW_EXCEPTION("failed to set requested console screen buffer size");
 	}
 
-	set_console_window_size(screen_buffer.size());
+	set_console_window_size(screen_buffer_size.get());
 }
+} // namespace console

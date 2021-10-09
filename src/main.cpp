@@ -1,4 +1,3 @@
-#include "config.hpp"
 #include "console.hpp"
 #include "exception.hpp"
 
@@ -7,22 +6,20 @@
 int main()
 {
 	try {
-		Config config;
+		console::set_cursor({ 100, true });
+		console::set_font({ 15 });
+		console::set_screen_buffer({ 400, 100 });
 
-		Console::set_cursor(config.load_cursor());
-		Console::set_font(config.load_font());
-		Console::set_screen_buffer(config.load_screen_buffer());
+		fmt::print("abcdefghijklmnopqrstuvwxyz\n");
 	}
 	catch (Exception& e) {
-		MessageBoxA(nullptr, e.what().c_str(), "Application error",
-					MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, e.what().c_str(), "Application error", MB_OK | MB_ICONERROR);
 	}
 	catch (std::exception& e) {
 		MessageBoxA(nullptr, e.what(), "C++ error", MB_OK | MB_ICONERROR);
 	}
 	catch (...) {
-		MessageBoxA(nullptr, "No details available", "Unknown error",
-					MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, "No details available", "Unknown error", MB_OK | MB_ICONERROR);
 	}
 	return 0;
 }

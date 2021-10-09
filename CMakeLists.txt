@@ -10,12 +10,12 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(
 	HEADERS
-	"config.hpp"
 	"console.hpp"
-	"cursor.hpp"
+	"cursor_info.hpp"
 	"exception.hpp"
-	"font.hpp"
-	"screen_buffer.hpp"
+	"font_info.hpp"
+	"screen_buffer_size.hpp"
+	"util.hpp"
 	"windows.hpp"
 )
 

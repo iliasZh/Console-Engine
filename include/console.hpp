@@ -2,19 +2,13 @@
 
 #include "windows.hpp"
 
-#include "cursor.hpp"
-#include "font.hpp"
-#include "screen_buffer.hpp"
+#include "cursor_info.hpp"
+#include "font_info.hpp"
+#include "screen_buffer_size.hpp"
 
-class Console
+namespace console
 {
-public:
-	static void set_cursor(Cursor);
-	static void set_font(Font);
-	static void set_screen_buffer(ScreenBuffer);
-
-	static constexpr int time_to_apply_changes_ms = 50;
-
-private:
-	// HWND   window_handle  = nullptr;
-};
+void set_cursor(CursorInfo);
+void set_font(FontInfo);
+void set_screen_buffer(ScreenBufferSize);
+} // namespace console
