@@ -34,6 +34,7 @@ public:
 		return m_info;
 	}
 
+	// These are arbitrary - I chose personally comfortable values.
 	static constexpr int min_width = 7;
 	static constexpr int max_width = 36;
 private:

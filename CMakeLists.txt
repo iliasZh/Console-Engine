@@ -22,6 +22,7 @@ set(
 set(
 	SOURCES
 	"console.cpp"
+	"util.cpp"
 	"main.cpp"
 )
 

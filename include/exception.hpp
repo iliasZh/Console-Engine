@@ -7,7 +7,11 @@
 class Exception
 {
 public:
-	Exception(std::string_view desc, std::string_view file_name, int line) noexcept // NOLINT
+	// The warning is that easily swappable params are bugprone.
+	// But Exception is instantiated only in the THROW_EXCEPTION macro,
+	// which only takes an error message.
+	Exception(std::string_view desc, std::string_view file_name, // NOLINT
+			  int line) noexcept
 		: m_description(desc)
 		, m_file_name(file_name)
 		, m_line(line)
@@ -24,4 +28,17 @@ private:
 	const int m_line;
 };
 
-#define THROW_EXCEPTION(error_msg) throw Exception{ error_msg, __FILE__, __LINE__ }; // NOLINT
+
+// The warnings are about function-like macro usage.
+// But I found no way to write these in a function.
+
+#define THROW_EXCEPTION(error_msg) /* NOLINT */ \
+	throw Exception                             \
+	{                                           \
+		(error_msg), __FILE__, __LINE__         \
+	}
+
+/// Many WinAPI functions signal failure by returning zero.
+#define THROW_IF_ZERO(func_call, error_msg) /* NOLINT */ \
+	if ((func_call) == 0)                                \
+	THROW_EXCEPTION(error_msg)
