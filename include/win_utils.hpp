@@ -2,7 +2,7 @@
 
 #include "windows.hpp"
 
-namespace util
+namespace win_utils
 {
 [[nodiscard]] HANDLE std_out();
 [[nodiscard]] HANDLE std_in();
@@ -13,4 +13,4 @@ namespace util
 
 void set_window_resizing(HWND h_wnd, bool enable);
 void set_maximize_button(HWND h_wnd, bool enable);
-} // namespace util
+} // namespace win_utils

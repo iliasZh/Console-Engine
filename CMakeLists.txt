@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION "3.21")
 
 project("console-engine")
 
-set(PROJECT_CXX_STANDARD cxx_std_17) # safe default
+# I use C++23 here (meaning -std:c++latest for MSVC and -std=gnu++2b for Clang),
+# but I actually mean C++20.
+# This is because <format> does not yet work in Microsoft's STL for -std:c++20.
+# When it will become available, I'll set this to cxx_std_20 - if I'll remember to, of course. 
+set(PROJECT_CXX_STANDARD cxx_std_23)
 
-# selects for all following targets a multi-threaded statically-linked
+# Selects for all following targets a multi-threaded statically-linked
 # runtime library with or without debug information depending on the configuration.
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
@@ -13,16 +17,16 @@ set(
 	"console.hpp"
 	"cursor_info.hpp"
 	"exception.hpp"
-	"font_info.hpp"
+	"font_info_ex.hpp"
 	"screen_buffer_size.hpp"
-	"util.hpp"
+	"win_utils.hpp"
 	"windows.hpp"
 )
 
 set(
 	SOURCES
 	"console.cpp"
-	"util.cpp"
+	"win_utils.cpp"
 	"main.cpp"
 )
 
@@ -33,32 +37,20 @@ list(TRANSFORM HEADERS PREPEND ${HEADER_DIR})
 list(TRANSFORM SOURCES PREPEND ${SOURCE_DIR})
 
 add_executable(
-	${PROJECT_NAME}
-	${SOURCES} ${HEADERS}
+	${PROJECT_NAME} ${SOURCES} ${HEADERS}
 )
 
 # set project's C++ standard
 target_compile_features(
-	${PROJECT_NAME} PRIVATE
-	${PROJECT_CXX_STANDARD}
+	${PROJECT_NAME} PRIVATE ${PROJECT_CXX_STANDARD}
 )
 
 target_include_directories(
-	${PROJECT_NAME} PRIVATE
-	${HEADER_DIR}
+	${PROJECT_NAME} PRIVATE ${HEADER_DIR}
 )
 target_sources(
-	${PROJECT_NAME} PRIVATE
-	${SOURCES} ${HEADERS}
+	${PROJECT_NAME} PRIVATE ${SOURCES} ${HEADERS}
 )
-
-# vcpkg libraries
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
-
-find_package(yaml-cpp CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
-
 
 #[[ # uncomment this block to enable google test
 
@@ -72,7 +64,7 @@ FetchContent_Declare(
 )
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
-if(MSVC)
+if (MSVC)
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif()
 
@@ -81,6 +73,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 set(TEST_DIR "test/")
+
 set(
 	TEST_SOURCES
 	"test.cpp"
@@ -89,14 +82,12 @@ set(
 list(TRANSFORM TEST_SOURCES PREPEND ${TEST_DIR})
 
 add_executable(
-	${TEST_SUBPROJECT_NAME}
-	${TEST_SOURCES}
+	${TEST_SUBPROJECT_NAME} ${TEST_SOURCES}
 )
 
 # set test project's C++ standard
 target_compile_features(
-	${TEST_SUBPROJECT_NAME} PRIVATE
-	${PROJECT_CXX_STANDARD}
+	${TEST_SUBPROJECT_NAME} PRIVATE ${PROJECT_CXX_STANDARD}
 )
 
 target_link_libraries(
@@ -105,8 +96,7 @@ target_link_libraries(
 )
 
 target_include_directories(
-	${TEST_SUBPROJECT_NAME} PRIVATE
-	${HEADER_DIR}
+	${TEST_SUBPROJECT_NAME} PRIVATE ${HEADER_DIR}
 )
 
 include(GoogleTest)
@@ -117,7 +107,8 @@ gtest_discover_tests(${TEST_SUBPROJECT_NAME})
 # man I love warnings! please send more
 if (MSVC)
 	target_compile_options(
-		${PROJECT_NAME} PRIVATE
+		${PROJECT_NAME}
+		PRIVATE
 		"/permissive-"
 		"/W4" "/w14640"
 		"/w14242" "/w14254" "/w14263" "/w14265"
@@ -126,9 +117,12 @@ if (MSVC)
 		"/w14555" "/w14619" "/w14826" "/w14905"
 		"/w14906" "/w14928"
 	)
-else() # gcc and clang
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR MINGW)
 	target_compile_options(
-		${PROJECT_NAME} PRIVATE
+		${PROJECT_NAME}
+		PRIVATE
 		"-Wall" "-Wextra" "-Wshadow" "-pedantic"
 		"-Wnon-virtual-dtor"	"-Wunused"
 		"-Wconversion"			"-Wsign-conversion"
@@ -139,9 +133,10 @@ else() # gcc and clang
 endif()
 
 # gcc exclusive
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+if (MINGW)
 	target_compile_options(
-		${PROJECT_NAME} PRIVATE
+		${PROJECT_NAME}
+		PRIVATE
 		"-Wmisleading-indentation"	"-Wduplicated-cond"
 		"-Wduplicated-branches"		"-Wlogical-op"
 		"-Wnull-dereference"		"-Wuseless-cast"

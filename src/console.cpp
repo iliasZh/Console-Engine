@@ -1,28 +1,40 @@
 #include "console.hpp"
 #include "exception.hpp"
-#include "util.hpp"
+#include "win_utils.hpp"
 
 #include <array>
+#include <consoleapi2.h>
+#include <format>
 
 namespace console
 {
 constexpr int time_to_apply_changes_ms = 50;
 
-void set_cursor(const CursorInfo cursor_info)
+void set_cursor_info(const CursorInfo cursor_info)
 {
-	THROW_IF_ZERO(SetConsoleCursorInfo(util::std_out(), &cursor_info.cref()),
-				  "failed to set console cursor");
+	THROW_IF_ZERO(SetConsoleCursorInfo(win_utils::std_out(), &cursor_info.cref()),
+				  L"failed to set console cursor");
 }
 
-void set_font(FontInfo font_info)
+[[nodiscard]] CursorInfo get_cursor_info()
 {
-	THROW_IF_ZERO(SetCurrentConsoleFontEx(util::std_out(), FALSE, &font_info.ref()),
-				  "failed to set console font");
+	CONSOLE_CURSOR_INFO info{};
+
+	THROW_IF_ZERO(GetConsoleCursorInfo(win_utils::std_out(), &info),
+				  L"failed to get console cursor info");
+
+	return CursorInfo{ info };
+}
+
+void set_font_info_ex(FontInfoEx font_info)
+{
+	THROW_IF_ZERO(SetCurrentConsoleFontEx(win_utils::std_out(), FALSE, &font_info.ref()),
+				  L"failed to set console font");
 
 	Sleep(time_to_apply_changes_ms);
 }
 
-void set_screen_buffer(const ScreenBufferSize screen_buffer_size)
+void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
 {
 	auto set_console_window_size = [](const COORD dims) {
 		SMALL_RECT window;
@@ -31,8 +43,8 @@ void set_screen_buffer(const ScreenBufferSize screen_buffer_size)
 		window.Right  = static_cast<SHORT>(dims.X - 1);
 		window.Bottom = static_cast<SHORT>(dims.Y - 1);
 
-		THROW_IF_ZERO(SetConsoleWindowInfo(util::std_out(), TRUE, &window),
-					  fmt::format("failed to set console window size to {}*{}", dims.X, dims.Y));
+		THROW_IF_ZERO(SetConsoleWindowInfo(win_utils::std_out(), TRUE, &window),
+					  std::format(L"failed to set console window size to {}*{}", dims.X, dims.Y));
 	};
 
 	// At any time console window size must not exceed the size of console screen buffer.
@@ -40,17 +52,17 @@ void set_screen_buffer(const ScreenBufferSize screen_buffer_size)
 	// buffer size without a problem.
 	set_console_window_size({ 1, 1 });
 
-	THROW_IF_ZERO(SetConsoleScreenBufferSize(util::std_out(), screen_buffer_size.get()),
-				  "failed to set requested console screen buffer size");
+	THROW_IF_ZERO(SetConsoleScreenBufferSize(win_utils::std_out(), screen_buffer_size.get()),
+				  L"failed to set requested console screen buffer size");
 
 	set_console_window_size(screen_buffer_size.get());
 }
 
 /// It takes some tens of milliseconds to set the title.
-void set_title(const std::string_view title)
+void set_title(const std::wstring_view title)
 {
-	THROW_IF_ZERO(SetConsoleTitle(title.data()),
-				  fmt::format("failed to set console title to \"{}\"", title));
+	THROW_IF_ZERO(SetConsoleTitleW(title.data()),
+				  std::format(L"failed to set console title to \"{}\"", title));
 
 	Sleep(time_to_apply_changes_ms);
 }
@@ -62,19 +74,19 @@ void set_title(const std::string_view title)
 
 	DWORD mode = 0;
 
-	THROW_IF_ZERO(GetConsoleMode(h_buf, &mode), "failed to get console's current i/o mode");
+	THROW_IF_ZERO(GetConsoleMode(h_buf, &mode), L"failed to get console's current i/o mode");
 
 	return mode;
 }
 
 void set_mode(HANDLE h_buf, const DWORD mode)
 {
-	THROW_IF_ZERO(SetConsoleMode(h_buf, mode), "failed to set console mode");
+	THROW_IF_ZERO(SetConsoleMode(h_buf, mode), L"failed to set console mode");
 }
 
-void set_text_selection(const bool enable)
+void set_quick_edit_mode(const bool enable)
 {
-	HANDLE std_in = util::std_in();
+	HANDLE std_in = win_utils::std_in();
 
 	const auto current_mode = get_mode(std_in);
 
@@ -85,16 +97,23 @@ void set_text_selection(const bool enable)
 	}
 }
 
+[[nodiscard]] bool get_quick_edit_mode()
+{
+	HANDLE std_in = win_utils::std_in();
+
+	return (get_mode(std_in) & ENABLE_QUICK_EDIT_MODE) != 0;
+}
+
 /// Maximum of 256 characters. Truncates if the title is bigger.
-[[nodiscard]] std::string get_title()
+[[nodiscard]] std::wstring get_title()
 {
 	constexpr int buf_size = 256;
 
-	std::array<char, buf_size> title_buf{};
+	std::array<wchar_t, buf_size> title_buf{};
 
-	const auto chars_written = GetConsoleTitle(title_buf.data(), buf_size);
+	const auto chars_written = GetConsoleTitleW(title_buf.data(), buf_size);
 	if (chars_written == 0) {
-		THROW_EXCEPTION("failed to get console window title");
+		THROW_EXCEPTION(L"failed to get console window title");
 	}
 
 	return { title_buf.cbegin(), std::next(title_buf.cbegin(), chars_written) };
@@ -105,12 +124,12 @@ void set_text_selection(const bool enable)
 	auto current_title = get_title();
 
 	// Change the title to avoid (unlikely, but) possible collisions.
-	std::string_view temp_title = "console engine by Ilias, this is a temporary title";
+	std::wstring_view temp_title = L"console engine by Ilias, this is a temporary title";
 	set_title(temp_title);
 
-	HWND handle = FindWindow(nullptr, temp_title.data());
+	HWND handle = FindWindowW(nullptr, temp_title.data());
 	if (handle == nullptr) {
-		THROW_EXCEPTION(fmt::format("failed to find window named \"{}\"", temp_title));
+		THROW_EXCEPTION(std::format(L"failed to find window named \"{}\"", temp_title));
 	}
 
 	set_title(current_title);

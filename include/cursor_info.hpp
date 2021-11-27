@@ -3,16 +3,19 @@
 #include "windows.hpp"
 
 #include <algorithm>
+#include <consoleapi2.h>
 #include <string>
 
 class CursorInfo
 {
 public:
+	constexpr CursorInfo(CONSOLE_CURSOR_INFO info) noexcept
+		: m_info{ clamp_size(info.dwSize), info.bVisible }
+	{}
+
 	constexpr CursorInfo(const int size, const bool visible) noexcept
-	{
-		m_info.dwSize	= static_cast<DWORD>(std::clamp(size, min_size, max_size));
-		m_info.bVisible = static_cast<BOOL>(visible);
-	}
+		: CursorInfo{ CONSOLE_CURSOR_INFO{ static_cast<DWORD>(size), static_cast<BOOL>(visible) } }
+	{}
 
 	[[nodiscard]] constexpr const auto& cref() const noexcept
 	{
@@ -24,8 +27,14 @@ public:
 		return m_info;
 	}
 
+	// See MSDN on why these values.
 	static constexpr int min_size = 1;
 	static constexpr int max_size = 100;
 private:
+	static constexpr DWORD clamp_size(const DWORD size)
+	{
+		return std::clamp(size, static_cast<DWORD>(min_size), static_cast<DWORD>(max_size));
+	}
+
 	CONSOLE_CURSOR_INFO m_info = { static_cast<DWORD>(min_size), static_cast<BOOL>(true) };
 };

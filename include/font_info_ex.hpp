@@ -6,13 +6,16 @@
 #include <cassert>
 #include <string>
 
-class FontInfo
+class FontInfoEx
 {
 public:
-	FontInfo(const int width)
+	/// Height to width ratio is always exactly 2. Clamps height to a certain range.
+	/// If height == 2n + 1 is given, sets font height to 2n.
+	constexpr FontInfoEx(const int height, const std::wstring_view face_name = L"Consolas") noexcept
 	{
-		auto w = std::clamp(width, min_width, max_width);
-		auto h = w * 2;
+		auto h = std::clamp(height - height % 2, min_height, max_height);
+		assert(h % 2 == 0); // must be even
+		auto w = h / 2;
 
 		m_info.cbSize	  = sizeof(m_info);
 		m_info.nFont	  = 0;
@@ -20,8 +23,13 @@ public:
 		m_info.FontFamily = FF_DONTCARE;
 		m_info.FontWeight = FW_NORMAL;
 
-		const std::wstring_view face_name = L"Consolas";
 		face_name.copy(static_cast<WCHAR* const>(m_info.FaceName), std::size(m_info.FaceName));
+	}
+
+	constexpr FontInfoEx(const CONSOLE_FONT_INFOEX info) noexcept
+		: m_info{ info }
+	{
+		assert(m_info.cbSize != 0); // forgot to set cbSize to sizeof(m_info)
 	}
 
 	[[nodiscard]] const auto& cref() const noexcept
@@ -35,8 +43,8 @@ public:
 	}
 
 	// These are arbitrary - I chose personally comfortable values.
-	static constexpr int min_width = 7;
-	static constexpr int max_width = 36;
+	static constexpr int min_height = 14;
+	static constexpr int max_height = 72;
 private:
 	CONSOLE_FONT_INFOEX m_info = {};
 };

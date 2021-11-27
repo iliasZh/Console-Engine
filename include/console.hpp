@@ -3,17 +3,25 @@
 #include "windows.hpp"
 
 #include "cursor_info.hpp"
-#include "font_info.hpp"
+#include "font_info_ex.hpp"
 #include "screen_buffer_size.hpp"
 
 namespace console
 {
-void set_cursor(CursorInfo);
-void set_font(FontInfo);
-void set_screen_buffer(ScreenBufferSize);
-void set_title(std::string_view);
-void set_text_selection(bool);
+void					 set_cursor_info(CursorInfo);
+[[nodiscard]] CursorInfo get_cursor_info();
 
-[[nodiscard]] std::string get_title();
-[[nodiscard]] HWND		  get_handle_to_window();
+void set_font_info_ex(FontInfoEx);
+// [[nodiscard]] FontInfoEx get_font_info_ex();
+
+void set_screen_buffer_size(ScreenBufferSize);
+// [[nodiscard]] ScreenBufferSize get_screen_buffer_size();
+
+void					   set_title(std::wstring_view);
+[[nodiscard]] std::wstring get_title();
+
+void set_quick_edit_mode(bool);
+bool get_quick_edit_mode();
+
+[[nodiscard]] HWND get_handle_to_window();
 } // namespace console

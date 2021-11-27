@@ -1,39 +1,50 @@
 #pragma once
 
 #include "exception.hpp"
-#include "util.hpp"
+#include "win_utils.hpp"
 #include "windows.hpp"
 
 #include <algorithm>
+#include <format>
 #include <string>
 
 class ScreenBufferSize
 {
 public:
-	ScreenBufferSize(const int width, const int height)
+	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
+	/// GetLargestConsoleWindowSize.
+	ScreenBufferSize(const COORD size)
 	{
 		auto [min_w, min_h] = min_size();
 		auto [max_w, max_h] = max_size();
 
 		if (min_w > max_w || min_h > max_h) {
-			THROW_EXCEPTION("screen buffer's minimum size exceeds maximum possible size");
+			THROW_EXCEPTION(std::format(L"screen buffer's maximum possible size ({}*{}) is smaller "
+										L"than hardcoded minimum size ({}*{})",
+										max_w, max_h, min_w, min_h));
 		}
 
-		m_size.X = std::clamp(static_cast<SHORT>(width), min_w, max_w);
-		m_size.Y = std::clamp(static_cast<SHORT>(height), min_h, max_h);
+		m_size = { std::clamp(size.X, min_w, max_w), std::clamp(size.Y, min_h, max_h) };
 	}
+
+	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
+	/// GetLargestConsoleWindowSize.
+	ScreenBufferSize(const int width, const int height)
+		: ScreenBufferSize{ COORD{ static_cast<SHORT>(width), static_cast<SHORT>(height) } }
+	{}
 
 	[[nodiscard]] auto get() const noexcept
 	{
 		return m_size;
 	}
 
+	// These are arbitrary, but I think adequate.
 	static constexpr int min_width	= 40;
 	static constexpr int min_height = 10;
 private:
 	static COORD max_size() noexcept
 	{
-		return GetLargestConsoleWindowSize(util::std_out());
+		return GetLargestConsoleWindowSize(win_utils::std_out());
 	}
 
 	constexpr static COORD min_size() noexcept
