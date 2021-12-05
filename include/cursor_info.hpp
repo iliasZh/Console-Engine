@@ -3,7 +3,6 @@
 #include "windows.hpp"
 
 #include <algorithm>
-#include <consoleapi2.h>
 #include <string>
 
 class CursorInfo

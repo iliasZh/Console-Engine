@@ -2,11 +2,7 @@ cmake_minimum_required(VERSION "3.21")
 
 project("console-engine")
 
-# I use C++23 here (meaning -std:c++latest for MSVC and -std=gnu++2b for Clang),
-# but I actually mean C++20.
-# This is because <format> does not yet work in Microsoft's STL for -std:c++20.
-# When it will become available, I'll set this to cxx_std_20 - if I'll remember to, of course. 
-set(PROJECT_CXX_STANDARD cxx_std_23)
+set(PROJECT_CXX_STANDARD cxx_std_20)
 
 # Selects for all following targets a multi-threaded statically-linked
 # runtime library with or without debug information depending on the configuration.
@@ -51,6 +47,12 @@ target_include_directories(
 target_sources(
 	${PROJECT_NAME} PRIVATE ${SOURCES} ${HEADERS}
 )
+
+
+# dependencies
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+
 
 #[[ # uncomment this block to enable google test
 
@@ -105,7 +107,9 @@ gtest_discover_tests(${TEST_SUBPROJECT_NAME})
 
 
 # man I love warnings! please send more
-if (MSVC)
+
+# cl.exe or clang-cl.exe
+if (MSVC OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC"))
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
@@ -119,7 +123,8 @@ if (MSVC)
 	)
 endif()
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR MINGW)
+# g++ or clang++
+if ((CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU") OR MINGW)
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
@@ -132,7 +137,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR MINGW)
 	)
 endif()
 
-# gcc exclusive
+# g++ exclusive flags
 if (MINGW)
 	target_compile_options(
 		${PROJECT_NAME}

@@ -23,13 +23,13 @@ public:
 		m_info.FontFamily = FF_DONTCARE;
 		m_info.FontWeight = FW_NORMAL;
 
-		face_name.copy(static_cast<WCHAR* const>(m_info.FaceName), std::size(m_info.FaceName));
+		face_name.copy(static_cast<WCHAR*>(m_info.FaceName), std::size(m_info.FaceName));
 	}
 
 	constexpr FontInfoEx(const CONSOLE_FONT_INFOEX info) noexcept
 		: m_info{ info }
 	{
-		assert(m_info.cbSize != 0); // forgot to set cbSize to sizeof(m_info)
+		assert(m_info.cbSize != 0); // if forgot to set cbSize to sizeof(m_info)
 	}
 
 	[[nodiscard]] const auto& cref() const noexcept

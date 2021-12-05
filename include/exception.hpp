@@ -1,7 +1,9 @@
 #pragma once
 
-#include <format>
-#include <string_view>
+#include <string>
+
+#include <fmt/format.h>
+#include <fmt/xchar.h>
 
 class Exception
 {
@@ -18,7 +20,7 @@ public:
 
 	[[nodiscard]] std::wstring what() const noexcept
 	{
-		return std::format(L"Error in \"{}\", line {}:\n {}", m_file_name, m_line, m_description);
+		return fmt::format(L"Error in \"{}\", line {}:\n {}", m_file_name, m_line, m_description);
 	}
 private:
 	[[nodiscard]] constexpr static std::wstring_view

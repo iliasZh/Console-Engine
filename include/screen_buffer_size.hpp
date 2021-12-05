@@ -5,8 +5,10 @@
 #include "windows.hpp"
 
 #include <algorithm>
-#include <format>
 #include <string>
+
+#include <fmt/format.h>
+#include <fmt/xchar.h>
 
 class ScreenBufferSize
 {
@@ -19,7 +21,7 @@ public:
 		auto [max_w, max_h] = max_size();
 
 		if (min_w > max_w || min_h > max_h) {
-			THROW_EXCEPTION(std::format(L"screen buffer's maximum possible size ({}*{}) is smaller "
+			THROW_EXCEPTION(fmt::format(L"screen buffer's maximum possible size ({}*{}) is smaller "
 										L"than hardcoded minimum size ({}*{})",
 										max_w, max_h, min_w, min_h));
 		}

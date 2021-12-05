@@ -3,13 +3,15 @@
 #include "win_utils.hpp"
 
 #include <exception>
-#include <format>
 #include <iostream>
+
+#include <fmt/format.h>
+#include <fmt/xchar.h>
 
 int main()
 {
 	try {
-		console::set_cursor_info({ 1, true });
+		console::set_cursor_info({ 1, false });
 		console::set_font_info_ex({ 30 });
 		console::set_screen_buffer_size({ 400, 100 });
 
@@ -22,7 +24,9 @@ int main()
 		win_utils::set_window_resizing(console_handle, false);
 		win_utils::set_maximize_button(console_handle, false);
 
-		std::wcout << std::format(L"Hello, C++{}\n", 20);
+		std::wcout << fmt::format(L"Hello, C++{}\n", 20);
+
+		Sleep(5000);
 	}
 	catch (const Exception& e) {
 		MessageBoxW(nullptr, e.what().c_str(), L"Application error", MB_OK | MB_ICONERROR);

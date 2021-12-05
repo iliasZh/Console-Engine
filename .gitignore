@@ -4,6 +4,9 @@
 # build files
 build/
 
+# vs build directory
+out/
+
 # vscode files
 .vscode/
 

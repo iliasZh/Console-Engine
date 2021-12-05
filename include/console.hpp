@@ -1,7 +1,6 @@
 #pragma once
 
 #include "windows.hpp"
-
 #include "cursor_info.hpp"
 #include "font_info_ex.hpp"
 #include "screen_buffer_size.hpp"

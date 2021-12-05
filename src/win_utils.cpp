@@ -4,7 +4,6 @@
 #include "windows.hpp"
 
 #include <cassert>
-#include <winuser.h>
 
 namespace win_utils
 {

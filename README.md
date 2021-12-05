@@ -6,25 +6,34 @@ A 2d console game engine in progress (for 64-bit Windows 10)
 You'll need:
 * Windows SDK.
 
-* MSVC 16.11.7 or newer / Clang 13.0.0 or newer. My MinGW GCC 10.3.0 does not support the `cxx_std_23` option (see CMakeLists.txt on why C++23 instead of C++20), and I didn't bother to try a newer version, but it may work.
+* MSVC / Clang with support for C++20 flag (MinGW doesn't work with fmt for some reason - I only tried 10.3.0)
 
 * CMake 3.21 or newer.
 
-All of the above (except Clang and not sure about CMake) comes with any recent version of Visual Studio 2019/2022.
+* vcpkg
 
-There are no additional dependencies yet.
+All of the above except vcpkg comes with any recent version of Visual Studio 2022.
 
+I build with latest Clang (from LLVM not from VS installation) and latest MSVC from VS2022.
 
-If you got everything, just build the project with CMake.
+Install vcpkg and then install fmt with
+`vcpkg install fmt:x64-windows-static`
 
+If you're using VS, just build the project with CMake, no configuration needed.
 
-If you are using the CMake Tools extension for VS Code (like me), add these options to your `settings.json`:
+If you're running CMake manually, run it with `-DCMAKE_TOOLCHAIN_FILE=[path to vcpkg]/scripts/buildsystems/vcpkg.cmake` AND `-DVCPKG_TARGET_TRIPLET=x64-windows-static`
+
+If you are using the CMake Tools extension for VS Code, add these options to your `settings.json`:
 ```json
 "cmake.debugConfig": {
 	"console": "externalTerminal"
 }
+"cmake.configureSettings": {
+		"CMAKE_TOOLCHAIN_FILE": "C:\\dev\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
+		"VCPKG_TARGET_TRIPLET": "x64-windows-static",
+	},
 ```
-Then you can launch the project as intended by clicking the debug button of the CMake Tools extension.
+Then you can launch the project by clicking the debug button of the CMake Tools extension.
 
 ### Misc
 

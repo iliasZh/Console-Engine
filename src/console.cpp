@@ -3,8 +3,9 @@
 #include "win_utils.hpp"
 
 #include <array>
-#include <consoleapi2.h>
-#include <format>
+
+#include <fmt/format.h>
+#include <fmt/xchar.h>
 
 namespace console
 {
@@ -37,14 +38,14 @@ void set_font_info_ex(FontInfoEx font_info)
 void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
 {
 	auto set_console_window_size = [](const COORD dims) {
-		SMALL_RECT window;
+		SMALL_RECT window{};
 		window.Left	  = 0;
 		window.Top	  = 0;
 		window.Right  = static_cast<SHORT>(dims.X - 1);
 		window.Bottom = static_cast<SHORT>(dims.Y - 1);
 
 		THROW_IF_ZERO(SetConsoleWindowInfo(win_utils::std_out(), TRUE, &window),
-					  std::format(L"failed to set console window size to {}*{}", dims.X, dims.Y));
+					  fmt::format(L"failed to set console window size to {}*{}", dims.X, dims.Y));
 	};
 
 	// At any time console window size must not exceed the size of console screen buffer.
@@ -62,7 +63,7 @@ void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
 void set_title(const std::wstring_view title)
 {
 	THROW_IF_ZERO(SetConsoleTitleW(title.data()),
-				  std::format(L"failed to set console title to \"{}\"", title));
+				  fmt::format(L"failed to set console title to \"{}\"", title));
 
 	Sleep(time_to_apply_changes_ms);
 }
@@ -129,7 +130,7 @@ void set_quick_edit_mode(const bool enable)
 
 	HWND handle = FindWindowW(nullptr, temp_title.data());
 	if (handle == nullptr) {
-		THROW_EXCEPTION(std::format(L"failed to find window named \"{}\"", temp_title));
+		THROW_EXCEPTION(fmt::format(L"failed to find window named \"{}\"", temp_title));
 	}
 
 	set_title(current_title);
