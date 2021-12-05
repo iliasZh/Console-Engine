@@ -26,12 +26,12 @@ If you're running CMake manually, run it with `-DCMAKE_TOOLCHAIN_FILE=[path to v
 If you are using the CMake Tools extension for VS Code, add these options to your `settings.json`:
 ```json
 "cmake.debugConfig": {
-	"console": "externalTerminal"
-}
+	"console": "externalTerminal",
+},
 "cmake.configureSettings": {
-		"CMAKE_TOOLCHAIN_FILE": "C:\\dev\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
-		"VCPKG_TARGET_TRIPLET": "x64-windows-static",
-	},
+	"CMAKE_TOOLCHAIN_FILE": "C:\\dev\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
+	"VCPKG_TARGET_TRIPLET": "x64-windows-static",
+},
 ```
 Then you can launch the project by clicking the debug button of the CMake Tools extension.
 
