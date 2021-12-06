@@ -1,8 +1,8 @@
 # console-engine
 
-A 2d console game engine in progress (for 64-bit Windows 10)
+A console game engine - work in progress (for 64-bit Windows 10)
 
-### How to build
+# How to build
 You'll need:
 * Windows SDK.
 
@@ -35,6 +35,6 @@ If you are using the CMake Tools extension for VS Code, add these options to you
 ```
 Then you can launch the project by clicking the debug button of the CMake Tools extension.
 
-### Misc
+# Misc
 
 Renaming project\'s folder ("console-engine") or creating folders with the same name inside may mess up custom exceptions\' info, but otherwise won't affect anything.
