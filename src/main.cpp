@@ -10,6 +10,8 @@
 
 int main()
 {
+	constexpr auto msg_box_appearance = MB_OK | MB_ICONERROR;
+
 	try {
 		console::set_cursor_info({ 1, false });
 		console::set_font_info_ex({ 30 });
@@ -29,14 +31,14 @@ int main()
 		fmt::print(L"Hello, C++{}\n", 20);
 	}
 	catch (const Exception& e) {
-		MessageBoxW(nullptr, e.what().c_str(), L"Application error", MB_OK | MB_ICONERROR);
+		MessageBoxW(nullptr, e.what().c_str(), L"Application error", msg_box_appearance);
 	}
 	catch (const std::exception& e) {
 		// Is it fine to use A and W versions together? I don't know. It probably is.
-		MessageBoxA(nullptr, e.what(), "C++ error", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, e.what(), "C++ error", msg_box_appearance);
 	}
 	catch (...) {
-		MessageBoxW(nullptr, L"No details available", L"Unknown error", MB_OK | MB_ICONERROR);
+		MessageBoxW(nullptr, L"No details available", L"Unknown error", msg_box_appearance);
 	}
 	return 0;
 }

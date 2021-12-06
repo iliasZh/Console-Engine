@@ -27,7 +27,7 @@ void set_cursor_info(const CursorInfo cursor_info)
 	return CursorInfo{ info };
 }
 
-void set_font_info_ex(FontInfoEx font_info)
+void set_font_info_ex(FontInfoEx font_info) // intentional non-const argument
 {
 	THROW_IF_ZERO(SetCurrentConsoleFontEx(win_utils::std_out(), FALSE, &font_info.ref()),
 				  L"failed to set console font");

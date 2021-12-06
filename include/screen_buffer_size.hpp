@@ -35,7 +35,7 @@ public:
 		: ScreenBufferSize{ COORD{ static_cast<SHORT>(width), static_cast<SHORT>(height) } }
 	{}
 
-	[[nodiscard]] auto get() const noexcept
+	[[nodiscard]] constexpr auto get() const noexcept
 	{
 		return m_size;
 	}

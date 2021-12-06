@@ -20,7 +20,7 @@ namespace win_utils
 /// Returns a handle to the primary display monitor.
 [[nodiscard]] HMONITOR primary_monitor_handle()
 {
-	const POINT zero = { 0, 0 };
+	constexpr POINT zero = { 0, 0 };
 
 	return MonitorFromPoint(zero, MONITOR_DEFAULTTOPRIMARY);
 }
