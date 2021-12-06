@@ -15,7 +15,7 @@ class ScreenBufferSize
 public:
 	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
 	/// GetLargestConsoleWindowSize.
-	ScreenBufferSize(const COORD size)
+	explicit ScreenBufferSize(const COORD size)
 	{
 		auto [min_w, min_h] = min_size();
 		auto [max_w, max_h] = max_size();

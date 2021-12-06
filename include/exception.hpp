@@ -11,8 +11,9 @@ public:
 	// The warning is that easily swappable params are bugprone.
 	// But Exception is instantiated only in the THROW_EXCEPTION macro,
 	// which only takes an error message.
-	constexpr Exception(const std::wstring_view desc, const std::wstring_view file_name, // NOLINT
-						const int line) noexcept
+	explicit constexpr Exception(const std::wstring_view desc,		// NOLINT
+								 const std::wstring_view file_name, // NOLINT
+								 const int				 line) noexcept
 		: m_description(desc)
 		, m_file_name(trim_to_root(file_name))
 		, m_line(line)

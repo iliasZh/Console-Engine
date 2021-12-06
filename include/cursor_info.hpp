@@ -8,7 +8,7 @@
 class CursorInfo
 {
 public:
-	constexpr CursorInfo(CONSOLE_CURSOR_INFO info) noexcept
+	explicit constexpr CursorInfo(const CONSOLE_CURSOR_INFO info) noexcept
 		: m_info{ clamp_size(info.dwSize), info.bVisible }
 	{}
 

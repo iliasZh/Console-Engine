@@ -26,7 +26,7 @@ public:
 		face_name.copy(static_cast<WCHAR*>(m_info.FaceName), std::size(m_info.FaceName));
 	}
 
-	constexpr FontInfoEx(const CONSOLE_FONT_INFOEX info) noexcept
+	explicit constexpr FontInfoEx(const CONSOLE_FONT_INFOEX info) noexcept
 		: m_info{ info }
 	{
 		assert(m_info.cbSize != 0); // if forgot to set cbSize to sizeof(m_info)

@@ -17,26 +17,28 @@ namespace win_utils
 	return GetStdHandle(STD_INPUT_HANDLE);
 }
 
-[[nodiscard]] auto monitor_handle_for_window(HWND h_wnd)
+/// Returns a handle to the primary display monitor.
+[[nodiscard]] HMONITOR primary_monitor_handle()
 {
-	assert(h_wnd != nullptr);
+	const POINT zero = { 0, 0 };
 
-	return MonitorFromWindow(h_wnd, MONITOR_DEFAULTTOPRIMARY);
+	return MonitorFromPoint(zero, MONITOR_DEFAULTTOPRIMARY);
 }
 
-[[nodiscard]] auto get_work_area_rectangle(HMONITOR h_mon)
+/// The work area rectangle of the primary display monitor, expressed in virtual-screen coordinates.
+[[nodiscard]] RECT primary_monitor_work_area()
 {
-	assert(h_mon != nullptr);
-
 	MONITORINFO mon_info{};
 	mon_info.cbSize = sizeof(mon_info);
 
-	THROW_IF_ZERO(GetMonitorInfoW(h_mon, &mon_info), L"failed to get monitor info");
+	THROW_IF_ZERO(GetMonitorInfoW(primary_monitor_handle(), &mon_info),
+				  L"failed to get monitor info");
 
-	return mon_info.rcMonitor;
+	return mon_info.rcWork;
 }
 
-[[nodiscard]] auto get_window_rectangle(HWND h_wnd)
+/// Returns the coordinates of the window.
+[[nodiscard]] RECT window_rectangle(HWND h_wnd)
 {
 	assert(h_wnd != nullptr);
 
@@ -48,7 +50,7 @@ namespace win_utils
 	return win_info.rcWindow;
 }
 
-[[nodiscard]] auto get_window_style(HWND h_wnd)
+[[nodiscard]] auto window_style(HWND h_wnd)
 {
 	assert(h_wnd != nullptr);
 
@@ -81,7 +83,7 @@ void set_button(HWND h_wnd, const LONG_PTR button_mask, const bool enable)
 {
 	assert(h_wnd != nullptr);
 
-	const auto current_style = get_window_style(h_wnd);
+	const auto current_style = window_style(h_wnd);
 
 	const bool button_enabled = (current_style & button_mask) != 0;
 
@@ -102,5 +104,29 @@ void set_maximize_button(HWND h_wnd, const bool enable)
 	assert(h_wnd != nullptr);
 
 	set_button(h_wnd, WS_MAXIMIZEBOX, enable);
+}
+
+/// Centers the window to the primary monitor.
+void center_window(HWND h_wnd)
+{
+	assert(h_wnd != nullptr);
+
+	const auto work_area = primary_monitor_work_area();
+	const auto win_rect	 = window_rectangle(h_wnd);
+
+	const auto width_of = [](const RECT r) {
+		return r.right - r.left;
+	};
+
+	const auto height_of = [](const RECT r) {
+		return r.bottom - r.top;
+	};
+
+	const auto centered_pos_x = (width_of(work_area) - width_of(win_rect)) / 2;
+	const auto centered_pos_y = (height_of(work_area) - height_of(win_rect)) / 2;
+
+	THROW_IF_ZERO(SetWindowPos(h_wnd, HWND_TOP, centered_pos_x, centered_pos_y, 0, 0,
+							   SWP_NOSIZE /* do not change the size of the window */),
+				  L"failed to center the window");
 }
 } // namespace win_utils

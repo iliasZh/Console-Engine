@@ -35,6 +35,16 @@ void set_font_info_ex(FontInfoEx font_info)
 	Sleep(time_to_apply_changes_ms);
 }
 
+[[nodiscard]] FontInfoEx get_font_info_ex()
+{
+	CONSOLE_FONT_INFOEX info{};
+
+	THROW_IF_ZERO(GetCurrentConsoleFontEx(win_utils::std_out(), FALSE, &info),
+				  L"failed to get font info");
+
+	return FontInfoEx{ info };
+}
+
 void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
 {
 	auto set_console_window_size = [](const COORD dims) {
@@ -57,6 +67,16 @@ void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
 				  L"failed to set requested console screen buffer size");
 
 	set_console_window_size(screen_buffer_size.get());
+}
+
+[[nodiscard]] ScreenBufferSize get_screen_buffer_size()
+{
+	CONSOLE_SCREEN_BUFFER_INFO info{};
+
+	THROW_IF_ZERO(GetConsoleScreenBufferInfo(win_utils::std_out(), &info),
+				  L"failed to get screen buffer size");
+
+	return ScreenBufferSize{ info.dwSize };
 }
 
 /// It takes some tens of milliseconds to set the title.

@@ -24,9 +24,9 @@ int main()
 		win_utils::set_window_resizing(console_handle, false);
 		win_utils::set_maximize_button(console_handle, false);
 
-		std::wcout << fmt::format(L"Hello, C++{}\n", 20);
+		win_utils::center_window(console_handle);
 
-		Sleep(5000);
+		fmt::print(L"Hello, C++{}\n", 20);
 	}
 	catch (const Exception& e) {
 		MessageBoxW(nullptr, e.what().c_str(), L"Application error", MB_OK | MB_ICONERROR);
