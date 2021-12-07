@@ -21,7 +21,7 @@ int main()
 
 		console::set_title(L"console engine by Ilias");
 
-		auto* console_handle = console::get_handle_to_window();
+		HWND console_handle = console::get_handle_to_window();
 
 		win_utils::set_window_resizing(console_handle, false);
 		win_utils::set_maximize_button(console_handle, false);

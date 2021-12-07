@@ -1,5 +1,4 @@
 #include "win_utils.hpp"
-
 #include "exception.hpp"
 #include "windows.hpp"
 
