@@ -4,7 +4,9 @@
 
 namespace character
 {
-enum class color : WORD
+// clang-format off
+// because it formats weirdly with [[maybe_unused]]
+enum class [[maybe_unused]] color : WORD
 {
 	black		 = 0x00,
 	dark_blue	 = 0x01,
@@ -23,7 +25,7 @@ enum class color : WORD
 	yellow		 = 0x0E,
 	white		 = 0x0F
 };
-
+// clang-format on
 
 /// Represents the foreground and background colors of a character cell.
 /// WinAPI represents the colors of a cell with the 'attributes' field of CHAR_INFO struct.
@@ -62,7 +64,6 @@ private:
 
 	static_assert((fg_mask | bg_mask) == colors_bits);
 };
-
 
 // test cases
 static_assert(color_pair{ color::white, color::black }.attributes() == 0x0F);	  // NOLINT

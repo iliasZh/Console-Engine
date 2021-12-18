@@ -3,10 +3,6 @@
 #include "win_utils.hpp"
 
 #include <exception>
-#include <iostream>
-
-#include <fmt/format.h>
-#include <fmt/xchar.h>
 
 int main()
 {
@@ -27,8 +23,6 @@ int main()
 		win_utils::set_maximize_button(console_handle, false);
 
 		win_utils::center_window(console_handle);
-
-		fmt::print(L"Hello, C++{}\n", 20);
 	}
 	catch (const Exception& e) {
 		MessageBoxW(nullptr, e.what().c_str(), L"Application error", msg_box_appearance);

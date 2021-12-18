@@ -4,14 +4,20 @@
 # build files
 build/
 
-# vs build directory
+# VS build files
 out/
 
-# vscode files
+# CLion build files
+cmake*/
+
+# VSCode files
 .vscode/
 
-# vs files
+# VS files
 .vs/
+
+# Clion files
+.idea/
 
 # clangd cache
 .cache/

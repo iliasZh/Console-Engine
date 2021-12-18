@@ -8,11 +8,11 @@
 class CursorInfo
 {
 public:
-	explicit constexpr CursorInfo(const CONSOLE_CURSOR_INFO info) noexcept
+	[[nodiscard]] explicit constexpr CursorInfo(const CONSOLE_CURSOR_INFO info) noexcept
 		: m_info{ clamp_size(info.dwSize), info.bVisible }
 	{}
 
-	constexpr CursorInfo(const int size, const bool visible) noexcept
+	[[nodiscard, maybe_unused]] constexpr CursorInfo(const int size, const bool visible) noexcept
 		: CursorInfo{ CONSOLE_CURSOR_INFO{ static_cast<DWORD>(size), static_cast<BOOL>(visible) } }
 	{}
 
@@ -21,7 +21,7 @@ public:
 		return m_info;
 	}
 
-	[[nodiscard]] constexpr auto& ref() noexcept
+	[[nodiscard, maybe_unused]] constexpr auto& ref() noexcept
 	{
 		return m_info;
 	}

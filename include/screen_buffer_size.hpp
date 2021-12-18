@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <string>
 
-#include <fmt/format.h>
 #include <fmt/xchar.h>
 
 class ScreenBufferSize
@@ -15,7 +14,7 @@ class ScreenBufferSize
 public:
 	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
 	/// GetLargestConsoleWindowSize.
-	explicit ScreenBufferSize(const COORD size)
+	[[nodiscard]] explicit ScreenBufferSize(const COORD size)
 	{
 		auto [min_w, min_h] = min_size();
 		auto [max_w, max_h] = max_size();
@@ -31,7 +30,7 @@ public:
 
 	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
 	/// GetLargestConsoleWindowSize.
-	ScreenBufferSize(const int width, const int height)
+	[[nodiscard, maybe_unused]] ScreenBufferSize(const int width, const int height)
 		: ScreenBufferSize{ COORD{ static_cast<SHORT>(width), static_cast<SHORT>(height) } }
 	{}
 

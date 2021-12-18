@@ -4,7 +4,6 @@
 
 #include <array>
 
-#include <fmt/format.h>
 #include <fmt/xchar.h>
 
 namespace console

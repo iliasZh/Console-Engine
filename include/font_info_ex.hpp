@@ -11,7 +11,8 @@ class FontInfoEx
 public:
 	/// Height to width ratio is always exactly 2. Clamps height to a certain range.
 	/// If height == 2n + 1 is given, sets font height to 2n.
-	constexpr FontInfoEx(const int height, const std::wstring_view face_name = L"Consolas") noexcept
+	// Intentionally not explicit.
+	[[maybe_unused]] constexpr FontInfoEx(const int height, const std::wstring_view face_name = L"Consolas") noexcept // NOLINT
 	{
 		auto h = std::clamp(height - height % 2, min_height, max_height);
 		assert(h % 2 == 0); // must be even
@@ -32,7 +33,7 @@ public:
 		assert(m_info.cbSize != 0); // if forgot to set cbSize to sizeof(m_info)
 	}
 
-	[[nodiscard]] constexpr const auto& cref() const noexcept
+	[[nodiscard, maybe_unused]] constexpr const auto& cref() const noexcept
 	{
 		return m_info;
 	}
