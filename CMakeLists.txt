@@ -50,11 +50,9 @@ target_sources(
 	${PROJECT_NAME} PRIVATE ${SOURCES} ${HEADERS}
 )
 
-
 # dependencies
 find_package(fmt CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
-
 
 #[[ # uncomment this block to enable google test
 
@@ -107,11 +105,10 @@ include(GoogleTest)
 gtest_discover_tests(${TEST_SUBPROJECT_NAME})
 ]]
 
-
 # man I love warnings! please send more
 
 # cl.exe or clang-cl.exe
-if (MSVC OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC"))
+if(MSVC OR(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC"))
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
@@ -126,26 +123,26 @@ if (MSVC OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONT
 endif()
 
 # g++ or clang++
-if ((CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU") OR MINGW)
+if((CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU") OR MINGW)
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
 		"-Wall" "-Wextra" "-Wshadow" "-pedantic"
-		"-Wnon-virtual-dtor"	"-Wunused"
-		"-Wconversion"			"-Wsign-conversion"
-		"-Wnull-dereference"	"-Wdouble-promotion"
-		"-Woverloaded-virtual"	"-Wpedantic"
-		"-Wcast-align"			"-Wformat=2"
+		"-Wnon-virtual-dtor" "-Wunused"
+		"-Wconversion" "-Wsign-conversion"
+		"-Wnull-dereference" "-Wdouble-promotion"
+		"-Woverloaded-virtual" "-Wpedantic"
+		"-Wcast-align" "-Wformat=2"
 	)
 endif()
 
 # g++ exclusive flags
-if (MINGW)
+if(MINGW)
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
-		"-Wmisleading-indentation"	"-Wduplicated-cond"
-		"-Wduplicated-branches"		"-Wlogical-op"
-		"-Wnull-dereference"		"-Wuseless-cast"
+		"-Wmisleading-indentation" "-Wduplicated-cond"
+		"-Wduplicated-branches" "-Wlogical-op"
+		"-Wnull-dereference" "-Wuseless-cast"
 	)
 endif()

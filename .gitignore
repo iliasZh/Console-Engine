@@ -16,7 +16,7 @@ cmake*/
 # VS files
 .vs/
 
-# Clion files
+# CLion files
 .idea/
 
 # clangd cache
