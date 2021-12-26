@@ -5,7 +5,6 @@
 #include "windows.hpp"
 
 #include <algorithm>
-#include <string>
 
 #include <fmt/xchar.h>
 
@@ -34,9 +33,19 @@ public:
 		: ScreenBufferSize{ COORD{ static_cast<SHORT>(width), static_cast<SHORT>(height) } }
 	{}
 
-	[[nodiscard]] constexpr auto get() const noexcept
+	[[nodiscard]] constexpr auto to_coord() const noexcept
 	{
 		return m_size;
+	}
+
+	[[nodiscard]] constexpr size_t width() const noexcept
+	{
+		return static_cast<size_t>(m_size.X);
+	}
+
+	[[nodiscard]] constexpr size_t height() const noexcept
+	{
+		return static_cast<size_t>(m_size.Y);
 	}
 
 	// These are arbitrary, but I think adequate.

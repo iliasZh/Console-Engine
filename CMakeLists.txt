@@ -16,13 +16,13 @@ set(
 	"exception.hpp"
 	"font_info_ex.hpp"
 	"screen_buffer_size.hpp"
+	"screen_buffer.hpp"
 	"win_utils.hpp"
 	"windows.hpp"
 )
 
 set(
 	SOURCES
-	"character.cpp"
 	"console.cpp"
 	"win_utils.cpp"
 	"main.cpp"

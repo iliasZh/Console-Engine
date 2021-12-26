@@ -3,7 +3,6 @@
 #include "windows.hpp"
 
 #include <algorithm>
-#include <string>
 
 class CursorInfo
 {

@@ -1,6 +1,6 @@
-#include "windows.hpp"
+#pragma once
 
-#include <cstdint>
+#include "windows.hpp"
 
 namespace character
 {
@@ -41,7 +41,7 @@ public:
 	{}
 
 	// I'm just ignoring the warning about easily swappable params lol.
-	constexpr color_pair(const color foreground, /* NOLINT */
+	constexpr color_pair(const color foreground = color::white, /* NOLINT */
 						 const color background = color::black /* NOLINT */) noexcept
 		: fg{ foreground }
 		, bg{ background }
@@ -70,7 +70,25 @@ static_assert(color_pair{ color::white, color::black }.attributes() == 0x0F);	  
 static_assert(color_pair{ color::green, color::dark_blue }.attributes() == 0x1A); // NOLINT
 
 
-constexpr CHAR_INFO	 char_info_from(wchar_t, color_pair) noexcept;
-constexpr wchar_t	 char_from(CHAR_INFO) noexcept;
-constexpr color_pair colors_from(CHAR_INFO) noexcept;
+inline constexpr CHAR_INFO char_info_from(wchar_t symbol, color_pair cp = {}) noexcept
+{
+	CHAR_INFO ch{};
+
+	// Can't change CHAR_INFO to use std::variant :(
+	ch.Char.UnicodeChar = symbol; // NOLINT
+	ch.Attributes		= cp.attributes();
+
+	return ch;
+}
+
+inline constexpr wchar_t char_from(const CHAR_INFO ch) noexcept
+{
+	// Can't change CHAR_INFO to use std::variant :(
+	return ch.Char.UnicodeChar; // NOLINT
+}
+
+inline constexpr color_pair colors_from(const CHAR_INFO ch) noexcept
+{
+	return color_pair{ ch.Attributes };
+}
 } // namespace character

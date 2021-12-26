@@ -2,6 +2,7 @@
 
 #include "cursor_info.hpp"
 #include "font_info_ex.hpp"
+#include "screen_buffer.hpp"
 #include "screen_buffer_size.hpp"
 #include "windows.hpp"
 
@@ -21,4 +22,6 @@ void set_quick_edit_mode(bool);
 bool get_quick_edit_mode();
 
 [[nodiscard]] HWND get_handle_to_window();
+
+void draw_screen_buffer(const ScreenBuffer&);
 } // namespace console

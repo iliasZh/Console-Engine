@@ -44,14 +44,10 @@ void set_font_info_ex(FontInfoEx font_info) // intentional non-const argument
 	return FontInfoEx{ info };
 }
 
-void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
+void set_screen_buffer_size(const ScreenBufferSize buf_size)
 {
 	auto set_console_window_size = [](const COORD dims) {
-		SMALL_RECT window{};
-		window.Left	  = 0;
-		window.Top	  = 0;
-		window.Right  = static_cast<SHORT>(dims.X - 1);
-		window.Bottom = static_cast<SHORT>(dims.Y - 1);
+		const SMALL_RECT window = win_utils::rect_from_coord(dims);
 
 		THROW_IF_ZERO(SetConsoleWindowInfo(win_utils::std_out(), TRUE, &window),
 					  fmt::format(L"failed to set console window size to {}*{}", dims.X, dims.Y));
@@ -62,10 +58,10 @@ void set_screen_buffer_size(const ScreenBufferSize screen_buffer_size)
 	// buffer size without a problem.
 	set_console_window_size({ 1, 1 });
 
-	THROW_IF_ZERO(SetConsoleScreenBufferSize(win_utils::std_out(), screen_buffer_size.get()),
+	THROW_IF_ZERO(SetConsoleScreenBufferSize(win_utils::std_out(), buf_size.to_coord()),
 				  L"failed to set requested console screen buffer size");
 
-	set_console_window_size(screen_buffer_size.get());
+	set_console_window_size(buf_size.to_coord());
 }
 
 [[nodiscard]] ScreenBufferSize get_screen_buffer_size()
@@ -155,5 +151,16 @@ void set_quick_edit_mode(const bool enable)
 	set_title(current_title);
 
 	return handle;
+}
+
+void draw_screen_buffer(const ScreenBuffer& buf)
+{
+	SMALL_RECT draw_region = win_utils::rect_from_coord(buf.size().to_coord());
+
+	constexpr COORD upper_left_cell_coord = { 0, 0 };
+
+	THROW_IF_ZERO(WriteConsoleOutputW(win_utils::std_out(), buf.buffer_view(),
+									  buf.size().to_coord(), upper_left_cell_coord, &draw_region),
+				  L"failed to draw the screen buffer");
 }
 } // namespace console
