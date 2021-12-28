@@ -4,8 +4,10 @@ project("console-engine")
 
 set(PROJECT_CXX_STANDARD cxx_std_20)
 
-# Selects for all following targets a multi-threaded statically-linked
-# runtime library with or without debug information depending on the configuration.
+# Selects a multi-threaded statically-linked runtime library for all following targets
+# with or without debug information depending on the configuration.
+#
+# Comment this out to use dynamically linked runtime.
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(
@@ -106,7 +108,6 @@ gtest_discover_tests(${TEST_SUBPROJECT_NAME})
 ]]
 
 # man I love warnings! please send more
-
 # cl.exe or clang-cl.exe
 if(MSVC OR(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC"))
 	target_compile_options(
