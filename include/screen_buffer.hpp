@@ -17,12 +17,12 @@ concept shader_func = std::invocable<F, size_t, size_t> && requires(F f)
 
 class ScreenBuffer
 {
-	using color = character::color;
+	using Color = character::Color;
 public:
 	[[nodiscard]] explicit ScreenBuffer(const int width, const int height,
-										const color bg = color::black)
+										const Color bg = Color::black)
 		: m_size{ width, height }
-		, m_data{ linear_size(), character::char_info_from(L' ', { color::white, bg }) }
+		, m_data{ linear_size(), character::char_info_from(L' ', { Color::white, bg }) }
 	{}
 
 	ScreenBuffer(const ScreenBuffer&)		   = delete;
@@ -33,10 +33,10 @@ public:
 
 	~ScreenBuffer() noexcept = default;
 
-	void clear(const color bg = color::black) noexcept
+	void clear(const Color bg = Color::black) noexcept
 	{
 		std::fill(m_data.begin(), m_data.end(),
-				  character::char_info_from(L' ', { color::white, bg }));
+				  character::char_info_from(L' ', { Color::white, bg }));
 	}
 
 	void fill(shader_func auto shader)

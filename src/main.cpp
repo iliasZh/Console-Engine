@@ -39,10 +39,10 @@ int main()
 			}
 
 			if (x < 15 && y < 15) {
-				return char_info_from(L' ', color_pair{ color::white, color::red });
+				return char_info_from(L' ', ColorPair{ Color::white, Color::red });
 			}
 
-			return char_info_from(L' ', color_pair{ color::white, color::white });
+			return char_info_from(L' ', ColorPair{ Color::white, Color::white });
 		});
 
 		console::draw_screen_buffer(s);

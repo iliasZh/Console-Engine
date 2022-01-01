@@ -6,7 +6,7 @@ namespace character
 {
 // clang-format off
 // because it formats weirdly with [[maybe_unused]]
-enum class [[maybe_unused]] color : WORD
+enum class [[maybe_unused]] Color : WORD
 {
 	black		 = 0x00,
 	dark_blue	 = 0x01,
@@ -32,17 +32,17 @@ enum class [[maybe_unused]] color : WORD
 /// It is a 16-bit value (WORD) where the upper 8 bits are unused in my case, and the lower 8 bits
 /// represent colors.
 /// Of those 8 bits, lower 4 represent foreground color, and upper 4 - background color.
-class color_pair
+class ColorPair
 {
 public:
-	explicit constexpr color_pair(const WORD attributes) noexcept
-		: fg{ static_cast<color>(attributes & fg_mask) }
-		, bg{ static_cast<color>((attributes & bg_mask) >> color_bit_size) }
+	explicit constexpr ColorPair(const WORD attributes) noexcept
+		: fg{ static_cast<Color>(attributes & fg_mask) }
+		, bg{ static_cast<Color>((attributes & bg_mask) >> color_bit_size) }
 	{}
 
 	// I'm just ignoring the warning about easily swappable params lol.
-	constexpr color_pair(const color foreground = color::white, /* NOLINT */
-						 const color background = color::black /* NOLINT */) noexcept
+	constexpr ColorPair(const Color foreground = Color::white, /* NOLINT */
+						const Color background = Color::black /* NOLINT */) noexcept
 		: fg{ foreground }
 		, bg{ background }
 	{}
@@ -57,8 +57,8 @@ public:
 	static constexpr int fg_mask = 0x0F;
 	static constexpr int bg_mask = fg_mask << color_bit_size; // i.e. 0xF0
 private:
-	color fg = color::white;
-	color bg = color::black;
+	Color fg = Color::white;
+	Color bg = Color::black;
 
 	static constexpr int colors_bits = 0xFF;
 
@@ -66,11 +66,11 @@ private:
 };
 
 // test cases
-static_assert(color_pair{ color::white, color::black }.attributes() == 0x0F);	  // NOLINT
-static_assert(color_pair{ color::green, color::dark_blue }.attributes() == 0x1A); // NOLINT
+static_assert(ColorPair{ Color::white, Color::black }.attributes() == 0x0F);	 // NOLINT
+static_assert(ColorPair{ Color::green, Color::dark_blue }.attributes() == 0x1A); // NOLINT
 
 
-inline constexpr CHAR_INFO char_info_from(wchar_t symbol, color_pair cp = {}) noexcept
+inline constexpr CHAR_INFO char_info_from(wchar_t symbol, ColorPair cp = {}) noexcept
 {
 	CHAR_INFO ch{};
 
@@ -87,8 +87,8 @@ inline constexpr wchar_t char_from(const CHAR_INFO ch) noexcept
 	return ch.Char.UnicodeChar; // NOLINT
 }
 
-inline constexpr color_pair colors_from(const CHAR_INFO ch) noexcept
+inline constexpr ColorPair colors_from(const CHAR_INFO ch) noexcept
 {
-	return color_pair{ ch.Attributes };
+	return ColorPair{ ch.Attributes };
 }
 } // namespace character
