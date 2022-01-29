@@ -1,7 +1,9 @@
 #include "character.hpp"
 #include "console.hpp"
 #include "exception.hpp"
+#include "matrix.hpp"
 #include "screen_buffer.hpp"
+#include "vector.hpp"
 #include "win_utils.hpp"
 
 #include <exception>
@@ -13,12 +15,12 @@ int main()
 	constexpr auto msg_box_appearance = MB_OK | MB_ICONERROR;
 
 	try {
+		console::set_font_info_ex({ 16 });
 		ScreenBuffer s{ 400, 200 };
 		console::set_screen_buffer_size(s.size());
 		console::set_cursor_info({ 1, false });
-		console::set_font_info_ex({ 30 });
 
-		console::set_quick_edit_mode(false);
+		console::set_quick_edit_mode(true);
 
 		console::set_title(L"console engine by Ilias");
 
@@ -29,23 +31,25 @@ int main()
 
 		win_utils::center_window(console_handle);
 
-		s.fill([](size_t x, size_t y) {
-			if (x < 5U && y < 5U) {
-				return char_info_from(L'\u2591');
-			}
+		auto v1 = math::Vector3f{ 1.0f, 1.0f, 1.0f };
 
-			if (x < 10 && y < 10) {
-				return char_info_from(L'\u2592');
-			}
+		auto v2 = math::Vector3f{ 2.0f, 0.5f, 1.5f };
 
-			if (x < 15 && y < 15) {
-				return char_info_from(L' ', ColorPair{ Color::white, Color::red });
-			}
+		v1 += math::Vector3f::x_versor();
 
-			return char_info_from(L' ', ColorPair{ Color::white, Color::white });
-		});
+		v1 *= -1.0f;
 
-		console::draw_screen_buffer(s);
+		fmt::print("v1: ({}, {}, {})\n", v1.x(), v1.y(), v1.z());
+		fmt::print("v2: ({}, {}, {})\n", v2.x(), v2.y(), v2.z());
+
+		fmt::print("len sq: {}\n", v1.length_squared());
+
+		fmt::print("screen buffer size: {} * {}\n", s.width(), s.height());
+
+
+		// s.test();
+
+		// console::draw_screen_buffer(s);
 	}
 	catch (const Exception& e) {
 		MessageBoxW(nullptr, e.what().c_str(), L"Application error", msg_box_appearance);

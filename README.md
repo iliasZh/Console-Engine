@@ -1,6 +1,6 @@
 # console-engine
 
-A console game engine - work in progress (for 64-bit Windows 10)
+A console graphics rendering engine - work in progress (for 64-bit Windows 10)
 
 # How to build
 You'll need:

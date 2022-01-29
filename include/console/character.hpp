@@ -66,7 +66,7 @@ private:
 };
 
 // test cases
-static_assert(ColorPair{ Color::white, Color::black }.attributes() == 0x0F);	 // NOLINT
+static_assert(ColorPair{ Color::white, Color::black }.attributes() == 0x0F); // NOLINT
 static_assert(ColorPair{ Color::green, Color::dark_blue }.attributes() == 0x1A); // NOLINT
 
 

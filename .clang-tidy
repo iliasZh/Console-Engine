@@ -6,7 +6,7 @@ Checks: >
   concurrency-*,
   performance-*,
   portability-*,
-  readability-*,
+  readability-*,-readability-uppercase-literal-suffix*,-readability-redundant-access-specifiers*,
   modernize-*,-modernize-use-trailing-return-type*,
   misc-*,
 # don't use tabs for indentation, use spaces...

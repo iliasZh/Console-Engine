@@ -11,7 +11,7 @@ template <class F>
 concept shader_func = std::invocable<F, size_t, size_t> && requires(F f)
 {
 	// clang-format off
-	{ f(0U, 0U) } -> std::same_as<CHAR_INFO>;
+	{ f(0u, 0u) } -> std::same_as<CHAR_INFO>;
 	// clang-format on
 };
 
@@ -41,8 +41,21 @@ public:
 
 	void fill(shader_func auto shader)
 	{
-		for (auto i = 0U; i < linear_size(); ++i) {
+		for (auto i = 0u; i < linear_size(); ++i) {
 			m_data[i] = shader(i % width(), i / width());
+		}
+	}
+
+	// TODO: remove
+	void test()
+	{
+		std::wstring_view gradient = L".:!/r(l1Z4H9W8$@";
+
+		for (size_t i = 0u; i < 16u; ++i) {
+			for (size_t j = 0u; j < 16u; ++j) {
+				m_data[i * width() + j] = character::char_info_from(
+					gradient[j], character::ColorPair{ character::Color(i) });
+			}
 		}
 	}
 

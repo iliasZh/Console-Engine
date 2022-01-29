@@ -11,7 +11,7 @@ set(PROJECT_CXX_STANDARD cxx_std_20)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(
-	HEADERS
+	CONSOLE_HEADERS
 	"character.hpp"
 	"console.hpp"
 	"cursor_info.hpp"
@@ -24,17 +24,30 @@ set(
 )
 
 set(
+	MATH_HEADERS
+	"vector.hpp"
+)
+
+set(
 	SOURCES
 	"console.cpp"
 	"win_utils.cpp"
 	"main.cpp"
 )
 
-set(HEADER_DIR "include/")
+set(CONSOLE_HEADERS_DIR "include/console/")
+set(MATH_HEADERS_DIR "include/math/")
 set(SOURCE_DIR "src/")
 
-list(TRANSFORM HEADERS PREPEND ${HEADER_DIR})
+list(TRANSFORM CONSOLE_HEADERS PREPEND ${CONSOLE_HEADERS_DIR})
+list(TRANSFORM MATH_HEADERS PREPEND ${MATH_HEADERS_DIR})
 list(TRANSFORM SOURCES PREPEND ${SOURCE_DIR})
+
+set(
+	HEADERS
+	${CONSOLE_HEADERS}
+	${MATH_HEADERS}
+)
 
 add_executable(
 	${PROJECT_NAME} ${SOURCES} ${HEADERS}
@@ -46,7 +59,10 @@ target_compile_features(
 )
 
 target_include_directories(
-	${PROJECT_NAME} PRIVATE ${HEADER_DIR}
+	${PROJECT_NAME}
+	PRIVATE
+	${CONSOLE_HEADERS_DIR}
+	${MATH_HEADERS_DIR}
 )
 target_sources(
 	${PROJECT_NAME} PRIVATE ${SOURCES} ${HEADERS}
@@ -128,12 +144,27 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIA
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
-		"-Wall" "-Wextra" "-Wshadow" "-pedantic"
+		"-Wall" "-Wextra" "-Wshadow-all" "-pedantic"
 		"-Wnon-virtual-dtor" "-Wunused"
 		"-Wconversion" "-Wsign-conversion"
 		"-Wnull-dereference" "-Wdouble-promotion"
 		"-Woverloaded-virtual" "-Wpedantic"
 		"-Wcast-align" "-Wformat=2"
+	)
+endif()
+
+if((CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU"))
+	target_compile_options(
+		${PROJECT_NAME}
+		PRIVATE
+		"-Wabstract-vbase-init" "-Wassign-enum"
+		"-Wnewline-eof" "-Wreserved-identifier"
+		"-Wunused-but-set-variable" "-Wunused-but-set-parameter"
+		"-Wnull-pointer-subtraction" "-Wrange-loop-analysis"
+		"-Wreorder" "-Wshift-sign-overflow"
+		"-Wshorten-64-to-32" "-Wsign-compare"
+		"-Wuninitialized" "-Wstring-conversion"
+		"-Wtautological-compare" "-Wunreachable-code"
 	)
 endif()
 
