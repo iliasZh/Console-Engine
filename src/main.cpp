@@ -35,17 +35,22 @@ int main()
 
 		auto v2 = math::Vector3f{ 2.0f, 0.5f, 1.5f };
 
+		auto v3 = math::Vector3i{ 1, 2, 3 };
+
+		auto v4 = v2.floor<int32_t>();
+
 		v1 += math::Vector3f::x_versor();
 
 		v1 *= -1.0f;
 
-		fmt::print("v1: ({}, {}, {})\n", v1.x(), v1.y(), v1.z());
-		fmt::print("v2: ({}, {}, {})\n", v2.x(), v2.y(), v2.z());
+		fmt::print("v1: {}\n", v1.to_string());
+		fmt::print("v2: {}\n", v2.to_string());
+		fmt::print("v3: {}\n", v3.to_string());
+		fmt::print("v4: {}\n", v4.to_string());
 
 		fmt::print("len sq: {}\n", v1.length_squared());
 
 		fmt::print("screen buffer size: {} * {}\n", s.width(), s.height());
-
 
 		// s.test();
 

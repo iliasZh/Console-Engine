@@ -9,16 +9,24 @@
 #include <functional>
 #include <numeric>
 
+#include <fmt/ranges.h>
+
 namespace math
 {
-template <std::floating_point Elem, size_t Dims>
+template <class T>
+concept int_least32 = std::same_as<T, int32_t> || std::same_as<T, int64_t>;
+
+template <class T>
+concept signed_number = std::floating_point<T> || int_least32<T>;
+
+template <signed_number Elem, size_t Dims>
 class Vector
 {
 private: // definitions && static asserts
 	static_assert(2u <= Dims && Dims <= 4u, "only 2, 3 and 4-dimensional vectors are supported");
 
-	static constexpr Elem zero = static_cast<Elem>(0.0f);
-	static constexpr Elem one  = static_cast<Elem>(1.0f);
+	static constexpr Elem zero = static_cast<Elem>(0);
+	static constexpr Elem one  = static_cast<Elem>(1);
 public: // methods
 	using elem_list = std::array<Elem, Dims>;
 
@@ -67,11 +75,17 @@ public: // methods
 
 	[[nodiscard]] Elem length() const noexcept
 	{
+		static_assert(std::floating_point<Elem>,
+					  "length method is disabled for non-floating point vectors");
+
 		return std::sqrt(length_squared());
 	}
 
 	Vector& normalize() noexcept
 	{
+		static_assert(std::floating_point<Elem>,
+					  "normalize method is disabled for non-floating point vectors");
+
 		return operator/=(length());
 	}
 
@@ -133,6 +147,9 @@ public: // methods
 
 	constexpr Vector& operator/=(const Elem scalar) noexcept
 	{
+		static_assert(std::floating_point<Elem>,
+					  "division is disabled for non-floating point vectors");
+
 		assert(scalar != zero);
 		const Elem inverse = one / scalar;
 
@@ -141,6 +158,9 @@ public: // methods
 
 	[[nodiscard]] constexpr Vector operator/(const Elem scalar) const noexcept
 	{
+		static_assert(std::floating_point<Elem>,
+					  "division is disabled for non-floating point vectors");
+
 		Vector result{ *this };
 		result /= scalar;
 
@@ -226,6 +246,28 @@ public: // methods
 
 		return v;
 	}
+
+	[[nodiscard]] std::string to_string(const std::string_view delim = ", ") const
+	{
+		return fmt::format("({})", fmt::join(m_elems, delim));
+	}
+
+	/// Can be used only on floating point vectors.
+	/// Returns an integer vector with every element rounded using `std::floor`.
+	template <int_least32 IntElem>
+	[[nodiscard]] Vector<IntElem, Dims> floor() const
+	{
+		static_assert(std::floating_point<Elem>,
+					  "cast to integer vector is defined for floating point vectors only");
+
+		typename Vector<IntElem, Dims>::elem_list elems{};
+
+		for (auto i = 0u; i < Dims; ++i) {
+			elems[i] = static_cast<IntElem>(std::floor(m_elems[i]));
+		}
+
+		return { elems };
+	}
 private: // methods
 	/// Unsequenced is equivalent to sequenced for now, but maybe it will be beneficial in the
 	/// future.
@@ -252,16 +294,25 @@ using Vector2d = Vector<double, 2u>;
 using Vector3d = Vector<double, 3u>;
 using Vector4d = Vector<double, 4u>;
 
-template <std::floating_point Elem>
-[[nodiscard]] Vector<Elem, 3u> inline constexpr cross_product(
-	const Vector<Elem, 3u>& a, // NOLINT
-	const Vector<Elem, 3u>& b) noexcept // NOLINT
+using Vector2i = Vector<int32_t, 2u>;
+using Vector3i = Vector<int32_t, 3u>;
+using Vector4i = Vector<int32_t, 4u>;
+
+using Vector2i64 = Vector<int64_t, 2u>;
+using Vector3i64 = Vector<int64_t, 3u>;
+using Vector4i64 = Vector<int64_t, 4u>;
+
+
+template <signed_number Elem>
+[[nodiscard]] constexpr inline Vector<Elem, 3u>
+cross_product(const Vector<Elem, 3u>& a, // NOLINT
+			  const Vector<Elem, 3u>& b) noexcept // NOLINT
 {
 	return a.cross(b);
 }
 
-template <std::floating_point Elem, size_t Dims>
-[[nodiscard]] Elem inline constexpr dot_product(const Vector<Elem, Dims>& a, // NOLINT
+template <signed_number Elem, size_t Dims>
+[[nodiscard]] constexpr inline Elem dot_product(const Vector<Elem, Dims>& a, // NOLINT
 												const Vector<Elem, Dims>& b) noexcept // NOLINT
 {
 	return a.dot(b);

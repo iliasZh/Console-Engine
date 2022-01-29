@@ -12,13 +12,12 @@ class Matrix
 private: // definitions & static asserts
 	static_assert(2u <= Dims && Dims <= 4u, "only 2x2, 3x3 and 4x4 matrices are supported");
 
-	static constexpr Elem zero = static_cast<Elem>(0.0f);
-	static constexpr Elem one  = static_cast<Elem>(1.0f);
+	static constexpr Elem zero = static_cast<Elem>(0);
+	static constexpr Elem one  = static_cast<Elem>(1);
 
 	static constexpr size_t number_of_elements = Dims * Dims;
 
 	using VectorDims = Vector<Elem, Dims>;
-	using Vector3	 = Vector<Elem, 3u>;
 public: // methods
 	using elem_list = std::array<Elem, number_of_elements>;
 
@@ -239,7 +238,7 @@ public: // methods
 		// clang-format on
 	}
 
-	[[nodiscard]] static constexpr Matrix translation(const Vector3& t) noexcept
+	[[nodiscard]] static constexpr Matrix translation(const Vector<Elem, 3u>& t) noexcept
 	{
 		static_assert(Dims == 4u, "translation matrix exists only in 4 dimensions");
 
