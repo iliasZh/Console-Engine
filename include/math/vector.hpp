@@ -1,5 +1,7 @@
 #pragma once
 
+#include "concepts.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -13,12 +15,6 @@
 
 namespace math
 {
-template <class T>
-concept int_least32 = std::same_as<T, int32_t> || std::same_as<T, int64_t>;
-
-template <class T>
-concept signed_number = std::floating_point<T> || int_least32<T>;
-
 template <signed_number Elem, size_t Dims>
 class Vector
 {
@@ -182,17 +178,17 @@ public: // methods
 		return m_elems[i];
 	}
 
-	[[nodiscard]] constexpr const Elem& x() const noexcept
+	[[nodiscard]] constexpr Elem x() const noexcept
 	{
 		return m_elems[0];
 	}
 
-	[[nodiscard]] constexpr const Elem& y() const noexcept
+	[[nodiscard]] constexpr Elem y() const noexcept
 	{
 		return m_elems[1];
 	}
 
-	[[nodiscard]] constexpr const Elem& z() const noexcept
+	[[nodiscard]] constexpr Elem z() const noexcept
 	{
 		static_assert(Dims == 3u || Dims == 4u,
 					  "there is no z-component in a 2-dimensional vector");
@@ -200,7 +196,7 @@ public: // methods
 		return m_elems[2];
 	}
 
-	[[nodiscard]] constexpr const Elem& w() const noexcept
+	[[nodiscard]] constexpr Elem w() const noexcept
 	{
 		static_assert(Dims == 4u, "there is no w-component in a 2- or 3-dimensional vector");
 
@@ -268,6 +264,8 @@ public: // methods
 
 		return { elems };
 	}
+
+	auto operator<=>(const Vector& other) const = default;
 private: // methods
 	/// Unsequenced is equivalent to sequenced for now, but maybe it will be beneficial in the
 	/// future.

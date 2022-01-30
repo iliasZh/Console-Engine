@@ -1,5 +1,7 @@
-#include <numbers>
+#pragma once
+
 #include <concepts>
+#include <numbers>
 
 namespace math
 {

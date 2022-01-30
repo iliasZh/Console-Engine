@@ -16,45 +16,38 @@ int main()
 
 	try {
 		console::set_font_info_ex({ 16 });
+
 		ScreenBuffer s{ 400, 200 };
+
 		console::set_screen_buffer_size(s.size());
 		console::set_cursor_info({ 1, false });
-
 		console::set_quick_edit_mode(true);
-
 		console::set_title(L"console engine by Ilias");
 
 		HWND console_handle = console::get_handle_to_window();
 
 		win_utils::set_window_resizing(console_handle, false);
 		win_utils::set_maximize_button(console_handle, false);
-
 		win_utils::center_window(console_handle);
 
-		auto v1 = math::Vector3f{ 1.0f, 1.0f, 1.0f };
+		const auto star		= character::char_info_from('*');
+		const auto red_star = character::char_info_from('*', ColorPair{ Color::red });
 
-		auto v2 = math::Vector3f{ 2.0f, 0.5f, 1.5f };
+		const math::Vector2i p1 = { 50, 25 };
+		const math::Vector2i p2 = { 100, 5 };
+		const math::Vector2i p3 = { 75, 35 };
 
-		auto v3 = math::Vector3i{ 1, 2, 3 };
+		s.draw_line(p1, p2, star);
+		s.draw_line(p2, p3, star);
+		s.draw_line(p3, p1, star);
 
-		auto v4 = v2.floor<int32_t>();
+		s.put_char(p1, red_star);
+		s.put_char(p2, red_star);
+		s.put_char(p3, red_star);
 
-		v1 += math::Vector3f::x_versor();
+		// s.draw_line({ 10, 10 }, { 15, 12 }, star);
 
-		v1 *= -1.0f;
-
-		fmt::print("v1: {}\n", v1.to_string());
-		fmt::print("v2: {}\n", v2.to_string());
-		fmt::print("v3: {}\n", v3.to_string());
-		fmt::print("v4: {}\n", v4.to_string());
-
-		fmt::print("len sq: {}\n", v1.length_squared());
-
-		fmt::print("screen buffer size: {} * {}\n", s.width(), s.height());
-
-		// s.test();
-
-		// console::draw_screen_buffer(s);
+		console::draw_screen_buffer(s);
 	}
 	catch (const Exception& e) {
 		MessageBoxW(nullptr, e.what().c_str(), L"Application error", msg_box_appearance);

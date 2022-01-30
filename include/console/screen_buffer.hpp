@@ -1,7 +1,10 @@
 #pragma once
 
 #include "character.hpp"
+#include "concepts.hpp"
 #include "screen_buffer_size.hpp"
+#include "utils.hpp"
+#include "vector.hpp"
 
 #include <algorithm>
 #include <concepts>
@@ -19,6 +22,35 @@ class ScreenBuffer
 {
 	using Color = character::Color;
 public:
+	template <math::integral_least32 IntType = std::size_t>
+	[[nodiscard]] constexpr IntType width() const noexcept
+	{
+		if constexpr (std::same_as<IntType, std::size_t>) {
+			return m_size.width();
+		} else {
+			return static_cast<IntType>(m_size.width());
+		}
+	}
+
+	template <math::integral_least32 IntType = std::size_t>
+	[[nodiscard]] constexpr IntType height() const noexcept
+	{
+		if constexpr (std::same_as<IntType, std::size_t>) {
+			return m_size.height();
+		}
+		return static_cast<IntType>(m_size.height());
+	}
+
+	template <math::integral_least32 IntType = std::size_t>
+	[[nodiscard]] constexpr IntType linear_size() const noexcept
+	{
+		if constexpr (std::same_as<IntType, std::size_t>) {
+			return width() * height();
+		} else {
+			return static_cast<IntType>(width() * height());
+		}
+	}
+
 	[[nodiscard]] explicit ScreenBuffer(const int width, const int height,
 										const Color bg = Color::black)
 		: m_size{ width, height }
@@ -64,21 +96,6 @@ public:
 		return m_size;
 	}
 
-	[[nodiscard]] constexpr size_t width() const noexcept
-	{
-		return m_size.width();
-	}
-
-	[[nodiscard]] constexpr size_t height() const noexcept
-	{
-		return m_size.height();
-	}
-
-	[[nodiscard]] constexpr size_t linear_size() const noexcept
-	{
-		return width() * height();
-	}
-
 	[[nodiscard]] constexpr const CHAR_INFO* buffer_view() const noexcept
 	{
 		return m_data.data();
@@ -87,6 +104,108 @@ public:
 	[[nodiscard]] constexpr CHAR_INFO* buffer() noexcept
 	{
 		return m_data.data();
+	}
+
+	[[nodiscard]] constexpr CHAR_INFO& at(const math::Vector2i p)
+	{
+		assert(contains(p));
+
+		const auto [x, y] = p.elements();
+
+		return m_data[width() * static_cast<size_t>(y) + static_cast<size_t>(x)];
+	}
+
+	void put_char(const math::Vector2i p, const CHAR_INFO ch)
+	{
+		at(p) = ch;
+	}
+
+	void draw_line(const math::Vector2i p1, const math::Vector2i p2, const CHAR_INFO ch)
+	{
+		// First point is always higher (has lesser y-coord) than the second point.
+		if (p1.y() < p2.y()) {
+			draw_line_bresenham(p1, p2, ch);
+		} else {
+			draw_line_bresenham(p2, p1, ch);
+		}
+	}
+private:
+	[[nodiscard]] bool contains(const math::Vector2i p) const
+	{
+		const auto [x, y] = p.elements();
+
+		return (0 <= x && x < width<int>()) && (0 <= y && y < height<int>());
+	}
+
+	void draw_line_bresenham(const math::Vector2i p1, const math::Vector2i p2, const CHAR_INFO ch)
+	{
+		assert(contains(p1) && contains(p2));
+		assert(p1.y() <= p2.y());
+
+		const auto [dx, dy] = (p2 - p1).elements();
+
+		const auto dx_sign = math::sign(dx);
+		const auto dy_sign = math::sign(dy);
+
+		if (dx == 0 && dy == 0) {
+			put_char(p1, ch);
+			return;
+		}
+
+		if (dx == 0) {
+			assert(dy_sign != 0);
+
+			const auto step = math::Vector2i::y_versor() * dy_sign;
+			draw_line_with_step(p1, p2, step, ch);
+
+			return;
+		}
+
+		if (dy == 0) {
+			assert(dx_sign != 0);
+
+			const auto step = math::Vector2i::x_versor() * dx_sign;
+			draw_line_with_step(p1, p2, step, ch);
+
+			return;
+		}
+
+		const auto dx_abs = std::abs(dx);
+		const auto dy_abs = std::abs(dy);
+
+		assert(dx_abs != 0 && dy_abs != 0);
+
+		if (auto error = 0; dx_abs >= dy_abs) {
+			for (auto [x, y] = p1.elements(); x != p2.x(); x += dx_sign, error += 2 * dy_abs) {
+				if (error >= dx_abs) {
+					error -= 2 * dx_abs;
+					y += dy_sign;
+				}
+
+				put_char({ x, y }, ch);
+			}
+		} else {
+			for (auto [x, y] = p1.elements(); y != p2.y(); y += dy_sign, error += 2 * dx_abs) {
+				if (error >= dy_abs) {
+					error -= 2 * dy_abs;
+					x += dx_sign;
+				}
+
+				put_char({ x, y }, ch);
+			}
+		}
+
+		put_char(p2, ch);
+	}
+
+	void draw_line_with_step(const math::Vector2i begin, const math::Vector2i end,
+							 const math::Vector2i step, const CHAR_INFO ch)
+	{
+		for (auto point = begin; point != end; point += step) {
+			put_char(point, ch);
+		}
+
+		put_char(end, ch);
 	}
 private:
 	const ScreenBufferSize m_size;
