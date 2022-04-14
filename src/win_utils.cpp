@@ -24,7 +24,8 @@ namespace win_utils
 	return MonitorFromPoint(zero, MONITOR_DEFAULTTOPRIMARY);
 }
 
-/// The work area rectangle of the primary display monitor, expressed in virtual-screen coordinates.
+/// The work area rectangle of the primary display monitor,
+/// expressed in virtual-screen coordinates.
 [[nodiscard]] RECT primary_monitor_work_area()
 {
 	MONITORINFO mon_info{};
@@ -44,7 +45,8 @@ namespace win_utils
 	WINDOWINFO win_info{};
 	win_info.cbSize = sizeof(win_info);
 
-	THROW_IF_ZERO(GetWindowInfo(h_wnd, &win_info), L"failed to get window info");
+	THROW_IF_ZERO(GetWindowInfo(h_wnd, &win_info),
+				  L"failed to get window info");
 
 	return win_info.rcWindow;
 }
@@ -67,15 +69,18 @@ void set_window_style(HWND h_wnd, const LONG_PTR style)
 	assert(h_wnd != nullptr);
 	assert(style != 0);
 
-	THROW_IF_ZERO(SetWindowLongPtrW(h_wnd, GWL_STYLE, style), L"failed to set window style");
+	THROW_IF_ZERO(SetWindowLongPtrW(h_wnd, GWL_STYLE, style),
+				  L"failed to set window style");
 
-	// MSDN: Certain window data is cached, so changes you make using SetWindowLongPtr
-	// will not take effect until you call the SetWindowPos function.
+	// MSDN: Certain window data is cached, so changes you make using
+	// SetWindowLongPtr will not take effect until
+	// you call the SetWindowPos function.
 
 	// This call does nothing except updating the styles.
-	THROW_IF_ZERO(SetWindowPos(h_wnd, HWND_TOP, 0, 0, 0, 0,
-							   SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED),
-				  L"failed to update window style");
+	THROW_IF_ZERO(
+		SetWindowPos(h_wnd, HWND_TOP, 0, 0, 0, 0,
+					 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED),
+		L"failed to update window style");
 }
 
 void set_button(HWND h_wnd, const LONG_PTR button_mask, const bool enable)
@@ -122,10 +127,12 @@ void center_window(HWND h_wnd)
 	};
 
 	const auto centered_pos_x = (width_of(work_area) - width_of(win_rect)) / 2;
-	const auto centered_pos_y = (height_of(work_area) - height_of(win_rect)) / 2;
+	const auto centered_pos_y =
+		(height_of(work_area) - height_of(win_rect)) / 2;
 
-	THROW_IF_ZERO(SetWindowPos(h_wnd, HWND_TOP, centered_pos_x, centered_pos_y, 0, 0,
-							   SWP_NOSIZE /* do not change the size of the window */),
-				  L"failed to center the window");
+	THROW_IF_ZERO(
+		SetWindowPos(h_wnd, HWND_TOP, centered_pos_x, centered_pos_y, 0, 0,
+					 SWP_NOSIZE /* do not change the size of the window */),
+		L"failed to center the window");
 }
 } // namespace win_utils

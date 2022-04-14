@@ -16,7 +16,8 @@
           "value": "x64-windows-static",
           "type": "STRING"
         }
-      ]
+      ],
+      "cmakeToolchain": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
     {
       "name": "x64-Release",

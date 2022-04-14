@@ -28,10 +28,10 @@ enum class [[maybe_unused]] Color : WORD
 // clang-format on
 
 /// Represents the foreground and background colors of a character cell.
-/// WinAPI represents the colors of a cell with the 'attributes' field of CHAR_INFO struct.
-/// It is a 16-bit value (WORD) where the upper 8 bits are unused in my case, and the lower 8 bits
-/// represent colors.
-/// Of those 8 bits, lower 4 represent foreground color, and upper 4 - background color.
+/// WinAPI represents the colors of a cell with the 'attributes' field of
+/// CHAR_INFO struct. It is a 16-bit value (WORD) where the upper 8 bits are
+/// unused in my case, and the lower 8 bits represent colors. Of those 8 bits,
+/// lower 4 represent foreground color, and upper 4 - background color.
 class ColorPair
 {
 public:
@@ -41,15 +41,19 @@ public:
 	{}
 
 	// I'm just ignoring the warning about easily swappable params lol.
-	constexpr ColorPair(const Color foreground = Color::white, /* NOLINT */
-						const Color background = Color::black /* NOLINT */) noexcept
+	constexpr ColorPair(
+		const Color foreground = Color::white, /* NOLINT */
+		const Color background = Color::black /* NOLINT */) noexcept
 		: fg{ foreground }
 		, bg{ background }
 	{}
 
 	[[nodiscard]] constexpr WORD attributes() const noexcept
 	{
-		return static_cast<WORD>(static_cast<int>(fg) | (static_cast<int>(bg) << color_bit_size));
+		const auto bg_attr = static_cast<int>(bg) << color_bit_size;
+		const auto fg_attr = static_cast<int>(fg);
+
+		return static_cast<WORD>(fg_attr | bg_attr);
 	}
 
 	static constexpr int color_bit_size = 4;
@@ -66,11 +70,14 @@ private:
 };
 
 // test cases
-static_assert(ColorPair{ Color::white, Color::black }.attributes() == 0x0F); // NOLINT
-static_assert(ColorPair{ Color::green, Color::dark_blue }.attributes() == 0x1A); // NOLINT
+static_assert(ColorPair{ Color::white, Color::black }.attributes() ==
+			  0x0F); // NOLINT
+static_assert(ColorPair{ Color::green, Color::dark_blue }.attributes() ==
+			  0x1A); // NOLINT
 
 
-inline constexpr CHAR_INFO char_info_from(wchar_t symbol, ColorPair cp = {}) noexcept
+inline constexpr CHAR_INFO char_info_from(wchar_t	symbol,
+										  ColorPair cp = {}) noexcept
 {
 	CHAR_INFO ch{};
 

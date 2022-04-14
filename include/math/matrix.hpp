@@ -10,7 +10,8 @@ template <std::floating_point Elem, size_t Dims>
 class Matrix
 {
 private: // definitions & static asserts
-	static_assert(2u <= Dims && Dims <= 4u, "only 2x2, 3x3 and 4x4 matrices are supported");
+	static_assert(2u <= Dims && Dims <= 4u,
+				  "only 2x2, 3x3 and 4x4 matrices are supported");
 
 	static constexpr Elem zero = static_cast<Elem>(0);
 	static constexpr Elem one  = static_cast<Elem>(1);
@@ -33,7 +34,8 @@ public: // methods
 		for (size_t i = 0u; i < Dims; ++i) {
 			for (size_t j = 0u; j < Dims; ++j) {
 				for (size_t k = 0u; k < Dims; ++k) {
-					product.elem_at(i, j) += elem_at(i, k) * other.elem_at(k, j);
+					product.elem_at(i, j) +=
+						elem_at(i, k) * other.elem_at(k, j);
 				}
 			}
 		}
@@ -110,8 +112,9 @@ public: // methods
 			const auto row_begin = std::next(m_elems.cbegin(), Dims * i);
 			const auto row_end	 = std::next(row_begin, Dims);
 
-			product[i] = std::transform_reduce(std::execution::unseq, row_begin, row_end,
-											   vec.elements().cbegin(), zero);
+			product[i] =
+				std::transform_reduce(std::execution::unseq, row_begin, row_end,
+									  vec.elements().cbegin(), zero);
 		}
 
 		return { product };
@@ -186,7 +189,8 @@ public: // methods
 
 	[[nodiscard]] static Matrix rotation_y(const Elem theta) noexcept
 	{
-		static_assert(Dims != 2u, "this rotation is undefined for 2 dimensions");
+		static_assert(Dims != 2u,
+					  "this rotation is undefined for 2 dimensions");
 
 		// Simple approach :)
 
@@ -213,7 +217,8 @@ public: // methods
 
 	[[nodiscard]] static Matrix rotation_x(const Elem theta) noexcept
 	{
-		static_assert(Dims != 2u, "this rotation is undefined for 2 dimensions");
+		static_assert(Dims != 2u,
+					  "this rotation is undefined for 2 dimensions");
 
 		// Simple approach :)
 
@@ -238,9 +243,11 @@ public: // methods
 		// clang-format on
 	}
 
-	[[nodiscard]] static constexpr Matrix translation(const Vector<Elem, 3u>& t) noexcept
+	[[nodiscard]] static constexpr Matrix
+	translation(const Vector<Elem, 3u>& t) noexcept
 	{
-		static_assert(Dims == 4u, "translation matrix exists only in 4 dimensions");
+		static_assert(Dims == 4u,
+					  "translation matrix exists only in 4 dimensions");
 
 		// clang-format off
 		return { {
@@ -257,13 +264,14 @@ private: // methods
 		return m_elems[Dims * row + col];
 	}
 
-	[[nodiscard]] constexpr const Elem& elem_at(size_t row, size_t col) const noexcept
+	[[nodiscard]] constexpr const Elem& elem_at(size_t row,
+												size_t col) const noexcept
 	{
 		return m_elems[Dims * row + col];
 	}
 
-	/// Unsequenced is equivalent to sequenced for now, but maybe it will be beneficial in the
-	/// future.
+	/// Unsequenced is equivalent to sequenced for now, but maybe it will be
+	/// beneficial in the future.
 	constexpr void unsequenced_transform(auto binary_op, const Matrix& other)
 	{
 		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(),
@@ -272,8 +280,8 @@ private: // methods
 
 	constexpr void unsequenced_transform(auto unary_op)
 	{
-		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(), m_elems.begin(),
-					   unary_op);
+		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(),
+					   m_elems.begin(), unary_op);
 	}
 private: // data
 	elem_list m_elems;

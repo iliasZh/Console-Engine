@@ -30,8 +30,9 @@ int main()
 		win_utils::set_maximize_button(console_handle, false);
 		win_utils::center_window(console_handle);
 
-		const auto star		= character::char_info_from('*');
-		const auto red_star = character::char_info_from('*', ColorPair{ Color::red });
+		const auto star = character::char_info_from('*');
+		const auto red_star =
+			character::char_info_from('*', ColorPair{ Color::red });
 
 		const math::Vector2i p1 = { 50, 25 };
 		const math::Vector2i p2 = { 100, 5 };
@@ -50,14 +51,17 @@ int main()
 		console::draw_screen_buffer(s);
 	}
 	catch (const Exception& e) {
-		MessageBoxW(nullptr, e.what().c_str(), L"Application error", msg_box_appearance);
+		MessageBoxW(nullptr, e.what().c_str(), L"Application error",
+					msg_box_appearance);
 	}
 	catch (const std::exception& e) {
-		// Is it fine to use A and W versions together? I don't know. It probably is.
+		// Is it fine to use A and W versions together? I don't know.
+		// It probably is.
 		MessageBoxA(nullptr, e.what(), "C++ error", msg_box_appearance);
 	}
 	catch (...) {
-		MessageBoxW(nullptr, L"No details available", L"Unknown error", msg_box_appearance);
+		MessageBoxW(nullptr, L"No details available", L"Unknown error",
+					msg_box_appearance);
 	}
 	return 0;
 }

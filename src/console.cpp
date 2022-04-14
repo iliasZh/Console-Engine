@@ -12,8 +12,9 @@ constexpr int time_to_apply_changes_ms = 50;
 
 void set_cursor_info(const CursorInfo cursor_info)
 {
-	THROW_IF_ZERO(SetConsoleCursorInfo(win_utils::std_out(), &cursor_info.cref()),
-				  L"failed to set console cursor");
+	THROW_IF_ZERO(
+		SetConsoleCursorInfo(win_utils::std_out(), &cursor_info.cref()),
+		L"failed to set console cursor");
 }
 
 [[nodiscard]] CursorInfo get_cursor_info()
@@ -28,8 +29,9 @@ void set_cursor_info(const CursorInfo cursor_info)
 
 void set_font_info_ex(FontInfoEx font_info) // intentional non-const argument
 {
-	THROW_IF_ZERO(SetCurrentConsoleFontEx(win_utils::std_out(), FALSE, &font_info.ref()),
-				  L"failed to set console font");
+	THROW_IF_ZERO(
+		SetCurrentConsoleFontEx(win_utils::std_out(), FALSE, &font_info.ref()),
+		L"failed to set console font");
 
 	Sleep(time_to_apply_changes_ms);
 }
@@ -50,16 +52,18 @@ void set_screen_buffer_size(const ScreenBufferSize buf_size)
 		const SMALL_RECT window = win_utils::rect_from_coord(dims);
 
 		THROW_IF_ZERO(SetConsoleWindowInfo(win_utils::std_out(), TRUE, &window),
-					  fmt::format(L"failed to set console window size to {}*{}", dims.X, dims.Y));
+					  fmt::format(L"failed to set console window size to {}*{}",
+								  dims.X, dims.Y));
 	};
 
-	// At any time console window size must not exceed the size of console screen buffer.
-	// For that reason set window size to minimum so that it is possible to set screen
-	// buffer size without a problem.
+	// At any time console window size must not exceed the size of console
+	// screen buffer. For that reason set window size to minimum so that it is
+	// possible to set screen buffer size without a problem.
 	set_console_window_size({ 1, 1 });
 
-	THROW_IF_ZERO(SetConsoleScreenBufferSize(win_utils::std_out(), buf_size.to_coord()),
-				  L"failed to set requested console screen buffer size");
+	THROW_IF_ZERO(
+		SetConsoleScreenBufferSize(win_utils::std_out(), buf_size.to_coord()),
+		L"failed to set requested console screen buffer size");
 
 	set_console_window_size(buf_size.to_coord());
 }
@@ -85,12 +89,14 @@ void set_title(const std::wstring_view title)
 
 [[nodiscard]] DWORD get_mode(HANDLE h_buf)
 {
-	// The warning is about the handle macro using C-style cast - can't do anything about it.
+	// The warning is about the handle macro using C-style cast - can't do
+	// anything about it.
 	assert(h_buf != INVALID_HANDLE_VALUE); // NOLINT
 
 	DWORD mode = 0;
 
-	THROW_IF_ZERO(GetConsoleMode(h_buf, &mode), L"failed to get console's current i/o mode");
+	THROW_IF_ZERO(GetConsoleMode(h_buf, &mode),
+				  L"failed to get console's current i/o mode");
 
 	return mode;
 }
@@ -109,7 +115,8 @@ void set_quick_edit_mode(const bool enable)
 	const bool selection_enabled = (current_mode & ENABLE_QUICK_EDIT_MODE) != 0;
 
 	if (selection_enabled != enable) {
-		set_mode(std_in, ENABLE_EXTENDED_FLAGS | (current_mode ^ ENABLE_QUICK_EDIT_MODE));
+		set_mode(std_in, ENABLE_EXTENDED_FLAGS |
+							 (current_mode ^ ENABLE_QUICK_EDIT_MODE));
 	}
 }
 
@@ -140,12 +147,14 @@ void set_quick_edit_mode(const bool enable)
 	auto current_title = get_title();
 
 	// Change the title to avoid (unlikely, but) possible collisions.
-	std::wstring_view temp_title = L"console engine by Ilias, this is a temporary title";
+	std::wstring_view temp_title =
+		L"console engine by Ilias, this is a temporary title";
 	set_title(temp_title);
 
 	HWND handle = FindWindowW(nullptr, temp_title.data());
 	if (handle == nullptr) {
-		THROW_EXCEPTION(fmt::format(L"failed to find window named \"{}\"", temp_title));
+		THROW_EXCEPTION(
+			fmt::format(L"failed to find window named \"{}\"", temp_title));
 	}
 
 	set_title(current_title);
@@ -160,7 +169,8 @@ void draw_screen_buffer(const ScreenBuffer& buf)
 	constexpr COORD upper_left_cell_coord = { 0, 0 };
 
 	THROW_IF_ZERO(WriteConsoleOutputW(win_utils::std_out(), buf.buffer_view(),
-									  buf.size().to_coord(), upper_left_cell_coord, &draw_region),
+									  buf.size().to_coord(),
+									  upper_left_cell_coord, &draw_region),
 				  L"failed to draw the screen buffer");
 }
 } // namespace console

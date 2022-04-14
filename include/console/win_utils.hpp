@@ -16,7 +16,8 @@ void set_maximize_button(HWND h_wnd, bool enable);
 
 void center_window(HWND);
 
-[[nodiscard]] inline constexpr SMALL_RECT rect_from_coord(const COORD c) noexcept
+[[nodiscard]] inline constexpr SMALL_RECT
+rect_from_coord(const COORD c) noexcept
 {
 	SMALL_RECT r{};
 

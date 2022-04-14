@@ -11,26 +11,30 @@
 class ScreenBufferSize
 {
 public:
-	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
-	/// GetLargestConsoleWindowSize.
+	/// Clamps the size between minimum hardcoded size and maximum possible
+	/// dynamic size given by GetLargestConsoleWindowSize.
 	[[nodiscard]] explicit ScreenBufferSize(const COORD size)
 	{
 		auto [min_w, min_h] = min_size();
 		auto [max_w, max_h] = max_size();
 
 		if (min_w > max_w || min_h > max_h) {
-			THROW_EXCEPTION(fmt::format(L"screen buffer's maximum possible size ({}*{}) is smaller "
-										L"than hardcoded minimum size ({}*{})",
-										max_w, max_h, min_w, min_h));
+			THROW_EXCEPTION(
+				fmt::format(L"screen buffer's maximum possible size ({}*{}) "
+							L"is smaller than hardcoded minimum size ({}*{})",
+							max_w, max_h, min_w, min_h));
 		}
 
-		m_size = { std::clamp(size.X, min_w, max_w), std::clamp(size.Y, min_h, max_h) };
+		m_size = { std::clamp(size.X, min_w, max_w),
+				   std::clamp(size.Y, min_h, max_h) };
 	}
 
-	/// Clamps the size between minimum hardcoded size and maximum possible dynamic size given by
-	/// GetLargestConsoleWindowSize.
-	[[nodiscard, maybe_unused]] ScreenBufferSize(const int width, const int height)
-		: ScreenBufferSize{ COORD{ static_cast<SHORT>(width), static_cast<SHORT>(height) } }
+	/// Clamps the size between minimum hardcoded size and maximum possible
+	/// dynamic size given by GetLargestConsoleWindowSize.
+	[[nodiscard, maybe_unused]] ScreenBufferSize(const int width,
+												 const int height)
+		: ScreenBufferSize{ COORD{ static_cast<SHORT>(width),
+								   static_cast<SHORT>(height) } }
 	{}
 
 	[[nodiscard]] constexpr auto to_coord() const noexcept
@@ -59,7 +63,8 @@ private:
 
 	constexpr static COORD min_size() noexcept
 	{
-		return { static_cast<SHORT>(min_width), static_cast<SHORT>(min_height) };
+		return { static_cast<SHORT>(min_width),
+				 static_cast<SHORT>(min_height) };
 	}
 
 	COORD m_size{ min_size() };

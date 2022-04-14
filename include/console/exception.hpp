@@ -10,7 +10,7 @@ public:
 	// The warning is that easily swappable params are bugprone.
 	// But Exception is instantiated only in the THROW_EXCEPTION macro,
 	// which only takes an error message.
-	explicit constexpr Exception(const std::wstring_view desc,		// NOLINT
+	explicit constexpr Exception(const std::wstring_view desc, // NOLINT
 								 const std::wstring_view file_name, // NOLINT
 								 const int				 line) noexcept
 		: m_description(desc)
@@ -20,7 +20,8 @@ public:
 
 	[[nodiscard]] std::wstring what() const noexcept
 	{
-		return fmt::format(L"Error in \"{}\", line {}:\n {}", m_file_name, m_line, m_description);
+		return fmt::format(L"Error in \"{}\", line {}:\n {}", m_file_name,
+						   m_line, m_description);
 	}
 private:
 	[[nodiscard]] constexpr static std::wstring_view
@@ -46,8 +47,8 @@ private:
 // The warnings are about function-like macro usage.
 // I know about <source_location>, but it breaks my clangd and clang-tidy :(
 
-#define WIDESTR_FILE_HELPER_2(x) L##x							 // NOLINT
-#define WIDESTR_FILE_HELPER_1(x) WIDESTR_FILE_HELPER_2(x)		 // NOLINT
+#define WIDESTR_FILE_HELPER_2(x) L##x // NOLINT
+#define WIDESTR_FILE_HELPER_1(x) WIDESTR_FILE_HELPER_2(x) // NOLINT
 #define WIDESTR_FILE			 WIDESTR_FILE_HELPER_1(__FILE__) // NOLINT
 
 #define THROW_EXCEPTION(error_msg) /* NOLINT */ \

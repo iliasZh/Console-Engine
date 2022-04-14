@@ -19,7 +19,8 @@ template <signed_number Elem, size_t Dims>
 class Vector
 {
 private: // definitions && static asserts
-	static_assert(2u <= Dims && Dims <= 4u, "only 2, 3 and 4-dimensional vectors are supported");
+	static_assert(2u <= Dims && Dims <= 4u,
+				  "only 2, 3 and 4-dimensional vectors are supported");
 
 	static constexpr Elem zero = static_cast<Elem>(0);
 	static constexpr Elem one  = static_cast<Elem>(1);
@@ -36,13 +37,15 @@ public: // methods
 		static_assert(Dims == 2u, "wrong number of components");
 	}
 
-	[[nodiscard]] constexpr Vector(const Elem x, const Elem y, const Elem z) noexcept
+	[[nodiscard]] constexpr Vector(const Elem x, const Elem y,
+								   const Elem z) noexcept
 		: m_elems{ x, y, z }
 	{
 		static_assert(Dims == 3u, "wrong number of components");
 	}
 
-	[[nodiscard]] constexpr Vector(const Elem x, const Elem y, const Elem z, const Elem w) noexcept
+	[[nodiscard]] constexpr Vector(const Elem x, const Elem y, const Elem z,
+								   const Elem w) noexcept
 		: m_elems{ x, y, z, w }
 	{
 		static_assert(Dims == 4u, "wrong number of components");
@@ -50,13 +53,16 @@ public: // methods
 
 	[[nodiscard]] constexpr Elem dot(const Vector& other) const noexcept
 	{
-		return std::transform_reduce(std::execution::unseq, m_elems.cbegin(), m_elems.cend(),
-									 other.m_elems.cbegin(), zero);
+		return std::transform_reduce(std::execution::unseq, m_elems.cbegin(),
+									 m_elems.cend(), other.m_elems.cbegin(),
+									 zero);
 	}
 
 	[[nodiscard]] constexpr Vector cross(const Vector& other) const noexcept
 	{
-		static_assert(Dims == 3u, "cross product is defined for 3-dimensional vectors only");
+		static_assert(
+			Dims == 3u,
+			"cross product is defined for 3-dimensional vectors only");
 
 		const auto& [ax, ay, az] = m_elems;
 		const auto& [bx, by, bz] = other.m_elems;
@@ -71,16 +77,18 @@ public: // methods
 
 	[[nodiscard]] Elem length() const noexcept
 	{
-		static_assert(std::floating_point<Elem>,
-					  "length method is disabled for non-floating point vectors");
+		static_assert(
+			std::floating_point<Elem>,
+			"length method is disabled for non-floating point vectors");
 
 		return std::sqrt(length_squared());
 	}
 
 	Vector& normalize() noexcept
 	{
-		static_assert(std::floating_point<Elem>,
-					  "normalize method is disabled for non-floating point vectors");
+		static_assert(
+			std::floating_point<Elem>,
+			"normalize method is disabled for non-floating point vectors");
 
 		return operator/=(length());
 	}
@@ -88,8 +96,8 @@ public: // methods
 	[[nodiscard]] constexpr Vector operator-() const noexcept
 	{
 		elem_list elems{};
-		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(), elems.begin(),
-					   std::negate{});
+		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(),
+					   elems.begin(), std::negate{});
 
 		return Vector{ elems };
 	}
@@ -173,7 +181,8 @@ public: // methods
 		return m_elems[i];
 	}
 
-	[[nodiscard]] constexpr const Elem& operator[](const size_t i) const noexcept
+	[[nodiscard]] constexpr const Elem&
+	operator[](const size_t i) const noexcept
 	{
 		return m_elems[i];
 	}
@@ -198,7 +207,9 @@ public: // methods
 
 	[[nodiscard]] constexpr Elem w() const noexcept
 	{
-		static_assert(Dims == 4u, "there is no w-component in a 2- or 3-dimensional vector");
+		static_assert(
+			Dims == 4u,
+			"there is no w-component in a 2- or 3-dimensional vector");
 
 		return m_elems[3];
 	}
@@ -243,7 +254,8 @@ public: // methods
 		return v;
 	}
 
-	[[nodiscard]] std::string to_string(const std::string_view delim = ", ") const
+	[[nodiscard]] std::string
+	to_string(const std::string_view delim = ", ") const
 	{
 		return fmt::format("({})", fmt::join(m_elems, delim));
 	}
@@ -254,7 +266,8 @@ public: // methods
 	[[nodiscard]] Vector<IntElem, Dims> floor() const
 	{
 		static_assert(std::floating_point<Elem>,
-					  "cast to integer vector is defined for floating point vectors only");
+					  "cast to integer vector is defined for floating point "
+					  "vectors only");
 
 		typename Vector<IntElem, Dims>::elem_list elems{};
 
@@ -267,8 +280,8 @@ public: // methods
 
 	auto operator<=>(const Vector& other) const = default;
 private: // methods
-	/// Unsequenced is equivalent to sequenced for now, but maybe it will be beneficial in the
-	/// future.
+	/// Unsequenced is equivalent to sequenced for now, but maybe it will be
+	/// beneficial in the future.
 	constexpr void unsequenced_transform(auto binary_op, const Vector& rhs)
 	{
 		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(),
@@ -277,8 +290,8 @@ private: // methods
 
 	constexpr void unsequenced_transform(auto unary_op)
 	{
-		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(), m_elems.begin(),
-					   unary_op);
+		std::transform(std::execution::unseq, m_elems.cbegin(), m_elems.cend(),
+					   m_elems.begin(), unary_op);
 	}
 private: // data
 	elem_list m_elems{};
@@ -310,8 +323,9 @@ cross_product(const Vector<Elem, 3u>& a, // NOLINT
 }
 
 template <signed_number Elem, size_t Dims>
-[[nodiscard]] constexpr inline Elem dot_product(const Vector<Elem, Dims>& a, // NOLINT
-												const Vector<Elem, Dims>& b) noexcept // NOLINT
+[[nodiscard]] constexpr inline Elem
+dot_product(const Vector<Elem, Dims>& a, // NOLINT
+			const Vector<Elem, Dims>& b) noexcept // NOLINT
 {
 	return a.dot(b);
 }
