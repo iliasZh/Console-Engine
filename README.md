@@ -6,7 +6,7 @@ A console graphics rendering engine - work in progress (for 64-bit Windows 10)
 You'll need:
 * Windows SDK
 
-* MSVC / Clang with support for C++20 flag (MinGW doesn't work with fmt for some reason - I only tried 10.3.0)
+* MSVC / Clang with support for C++20 flag
 
 * CMake 3.26 or newer
 
