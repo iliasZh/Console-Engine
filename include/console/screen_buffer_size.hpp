@@ -6,7 +6,7 @@
 
 #include <algorithm>
 
-#include <fmt/xchar.h>
+#include <format>
 
 class ScreenBufferSize
 {
@@ -20,7 +20,7 @@ public:
 
 		if (min_w > max_w || min_h > max_h) {
 			THROW_EXCEPTION(
-				fmt::format(L"screen buffer's maximum possible size ({}*{}) "
+				std::format(L"screen buffer's maximum possible size ({}*{}) "
 							L"is smaller than hardcoded minimum size ({}*{})",
 							max_w, max_h, min_w, min_h));
 		}

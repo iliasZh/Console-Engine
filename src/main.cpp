@@ -7,6 +7,7 @@
 #include "win_utils.hpp"
 
 #include <exception>
+#include <iostream>
 
 using namespace character;
 
@@ -15,13 +16,13 @@ int main()
 	constexpr auto msg_box_appearance = MB_OK | MB_ICONERROR;
 
 	try {
-		console::set_font_info_ex({ 16 });
+		console::set_font_info_ex({ 12 });
 
-		ScreenBuffer s{ 400, 200 };
+		ScreenBuffer s{ 120, 30 };
 
 		console::set_screen_buffer_size(s.size());
 		console::set_cursor_info({ 1, false });
-		console::set_quick_edit_mode(true);
+		console::set_quick_edit_mode(false);
 		console::set_title(L"console engine by Ilias");
 
 		HWND console_handle = console::get_handle_to_window();
@@ -34,9 +35,9 @@ int main()
 		const auto red_star =
 			character::char_info_from('*', ColorPair{ Color::red });
 
-		const math::Vector2i p1 = { 50, 25 };
+		const math::Vector2i p1 = { 50, 15 };
 		const math::Vector2i p2 = { 100, 5 };
-		const math::Vector2i p3 = { 75, 35 };
+		const math::Vector2i p3 = { 75, 25 };
 
 		s.draw_line(p1, p2, star);
 		s.draw_line(p2, p3, star);
@@ -49,6 +50,8 @@ int main()
 		// s.draw_line({ 10, 10 }, { 15, 12 }, star);
 
 		console::draw_screen_buffer(s);
+
+		std::cin.get();
 	}
 	catch (const Exception& e) {
 		MessageBoxW(nullptr, e.what().c_str(), L"Application error",

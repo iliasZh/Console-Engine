@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <fmt/xchar.h>
+#include <format>
 
 class Exception
 {
@@ -20,7 +20,7 @@ public:
 
 	[[nodiscard]] std::wstring what() const noexcept
 	{
-		return fmt::format(L"Error in \"{}\", line {}:\n {}", m_file_name,
+		return std::format(L"Error in \"{}\", line {}:\n {}", m_file_name,
 						   m_line, m_description);
 	}
 private:

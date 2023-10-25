@@ -11,8 +11,6 @@
 #include <functional>
 #include <numeric>
 
-#include <fmt/ranges.h>
-
 namespace math
 {
 template <signed_number Elem, size_t Dims>
@@ -252,12 +250,6 @@ public: // methods
 		v[3]   = one;
 
 		return v;
-	}
-
-	[[nodiscard]] std::string
-	to_string(const std::string_view delim = ", ") const
-	{
-		return fmt::format("({})", fmt::join(m_elems, delim));
 	}
 
 	/// Can be used only on floating point vectors.

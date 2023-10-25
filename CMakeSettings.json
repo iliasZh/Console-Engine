@@ -9,15 +9,7 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
-      "ctestCommandArgs": "",
-      "variables": [
-        {
-          "name": "VCPKG_TARGET_TRIPLET",
-          "value": "x64-windows-static",
-          "type": "STRING"
-        }
-      ],
-      "cmakeToolchain": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "ctestCommandArgs": ""
     },
     {
       "name": "x64-Release",
@@ -28,14 +20,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": [
-        {
-          "name": "VCPKG_TARGET_TRIPLET",
-          "value": "x64-windows-static",
-          "type": "STRING"
-        }
-      ]
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]
 }

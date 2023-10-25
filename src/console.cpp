@@ -4,7 +4,7 @@
 
 #include <array>
 
-#include <fmt/xchar.h>
+#include <format>
 
 namespace console
 {
@@ -52,7 +52,7 @@ void set_screen_buffer_size(const ScreenBufferSize buf_size)
 		const SMALL_RECT window = win_utils::rect_from_coord(dims);
 
 		THROW_IF_ZERO(SetConsoleWindowInfo(win_utils::std_out(), TRUE, &window),
-					  fmt::format(L"failed to set console window size to {}*{}",
+					  std::format(L"failed to set console window size to {}*{}",
 								  dims.X, dims.Y));
 	};
 
@@ -82,7 +82,7 @@ void set_screen_buffer_size(const ScreenBufferSize buf_size)
 void set_title(const std::wstring_view title)
 {
 	THROW_IF_ZERO(SetConsoleTitleW(title.data()),
-				  fmt::format(L"failed to set console title to \"{}\"", title));
+				  std::format(L"failed to set console title to \"{}\"", title));
 
 	Sleep(time_to_apply_changes_ms);
 }
@@ -154,7 +154,7 @@ void set_quick_edit_mode(const bool enable)
 	HWND handle = FindWindowW(nullptr, temp_title.data());
 	if (handle == nullptr) {
 		THROW_EXCEPTION(
-			fmt::format(L"failed to find window named \"{}\"", temp_title));
+			std::format(L"failed to find window named \"{}\"", temp_title));
 	}
 
 	set_title(current_title);

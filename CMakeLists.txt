@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION "3.21")
+cmake_minimum_required(VERSION 3.26)
 
 project("console-engine")
 
-set(PROJECT_CXX_STANDARD cxx_std_20)
+set(CMAKE_CXX_STANDARD 20)
 
 # Selects a multi-threaded statically-linked runtime library for all following targets
 # with or without debug information depending on the configuration.
@@ -53,11 +53,6 @@ add_executable(
 	${PROJECT_NAME} ${SOURCES} ${HEADERS}
 )
 
-# set project's C++ standard
-target_compile_features(
-	${PROJECT_NAME} PRIVATE ${PROJECT_CXX_STANDARD}
-)
-
 target_include_directories(
 	${PROJECT_NAME}
 	PRIVATE
@@ -67,10 +62,6 @@ target_include_directories(
 target_sources(
 	${PROJECT_NAME} PRIVATE ${SOURCES} ${HEADERS}
 )
-
-# dependencies
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 
 #[[ # uncomment this block to enable google test
 
